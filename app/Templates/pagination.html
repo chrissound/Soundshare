@@ -1,0 +1,9 @@
+<ul class="pagination">
+    {% for page in pages %}
+        <li
+            {% if page.active %} class="active" {% endif %}
+        >
+            <a href="{{ page.link }}">{{ page.title }}</a>
+        </li>
+    {% endfor %}
+</ul>

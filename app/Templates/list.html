@@ -1,0 +1,18 @@
+<p>{{ title }}:</p>
+<table>
+    <tr>
+        {% for header in headers %}
+            <th>{{ header }}</th>
+        {% endfor %}
+    </tr>
+    {% for record in records %}
+        <tr>
+            {% for element in record %}
+            <td>{{ element}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+<pre>
+</pre>

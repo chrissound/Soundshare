@@ -1,0 +1,14 @@
+{
+     "autoload": {
+        "psr-0": {
+            "Bitlama\\": "app/"}
+     },
+    "require": {
+        "gabordemooij/redbean": "dev-master",
+        "slim/slim": "2.*",
+        "slim/views": "0.1.*",
+        "twig/twig": "1.*",
+        "aura/filter" : "*.*",
+        "phpmd/phpmd" : "1.4.*"
+    }
+}

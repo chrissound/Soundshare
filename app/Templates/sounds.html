@@ -1,0 +1,21 @@
+{% for sound in sounds %}
+<div>
+    <p><span class="glyphicon glyphicon-music"></span> <a href='/user/sound/{{ sound.id }}'>{{ sound.title }}</a></p>
+    {% if showAuthorReference %}
+        <p><span class="glyphicon glyphicon-user"></span> <a href="/user/{{ sound.user.id}}">{{ sound.user.alias }}</a></p>
+    {% endif %}
+    {% if (sound.processing == true) and (showSoundProcessing) %}
+        <p><span class="glyphicon glyphicon-cog"></span> Processing</p>
+    {% endif %}
+
+    <audio controls>
+        {% if sound.isPresentMp3 %}
+            <source src="/public/sound/sound_{{ sound.id }}.mp3" type="audio/mpeg"></source>
+        {% endif %}
+        {% if sound.isPresentOgg %}
+            <source src="/public/sound/sound_{{ sound.id }}.ogg" type="audio/ogg"></source>
+        {% endif %}
+    </audio>
+</div>
+<hr />
+{% endfor %}
