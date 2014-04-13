@@ -8,6 +8,7 @@ class BackgroundProcessing extends \Bitlama\Controllers\BaseController {
     {
         $controller = $this;
         $this->app->get('/background_process/:secret', function ($secret) use($controller) {
+                    $controller->app->log->debug("Background process.");
             if ($secret === 'abracadabra') // L33t securities 
             {
 
@@ -16,11 +17,11 @@ class BackgroundProcessing extends \Bitlama\Controllers\BaseController {
                 // dependency injection candidate
                 foreach($sounds as $sound)
                 {
-                    $sound->user; // Seems like a twig/readbean bug :(
                     $sound->setApp($controller->app);
                     $sound->initialize();
 
-                    if ($sound->processing)
+                    $controller->app->log->debug("Sound {$sound->id} processing is {$sound->processing}.");
+                    if ($sound->isProcessing())
                     {
                         $convert = new \Bitlama\Common\Convert($sound);
                         $convert->setApp($this->app);

@@ -16,7 +16,12 @@ class Sound extends \Bitlama\Models\BaseModel {
     }
 
     public function initialize() {
-        $this->bean->processing = $this->isProcessing();
+        if($this->bean->processing != $this->isProcessing())
+        {
+            $this->bean->processing = !$this->bean->processing;
+            $this->app->datasource->store($this->bean);
+        }
+
         $this->getFiles();
     }
 
@@ -171,7 +176,7 @@ class Sound extends \Bitlama\Models\BaseModel {
 
     public function getConversions()
     {
-        return $this->app->datasource->find('conversion', 'id = ?', [$this->bean->id]);
+        return $this->bean->ownConversion;
     }
 
     public function isPresentMp3()
