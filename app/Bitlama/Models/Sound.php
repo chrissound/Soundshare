@@ -42,7 +42,7 @@ class Sound extends \Bitlama\Models\BaseModel {
             return false;
     }
 
-    /* moves file to application path */
+    /* copies file to application path */
     public function loadFile($filePath)
     {
         $file = new \Bitlama\Common\File($filePath);

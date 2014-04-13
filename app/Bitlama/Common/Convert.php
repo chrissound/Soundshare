@@ -33,6 +33,8 @@ class Convert {
                     $filePath = $this->processConversion($conversion);
                     $sound->loadFile($filePath);
                     $this->app->datasource->trash($conversion);
+                    if(!unlink($filePath))
+                        $this->app->log->debug("Unable to delete:". $filePath);
                 }
                 catch (\ConversionNotFinished $e)
                 {
@@ -68,6 +70,10 @@ class Convert {
         }
     } 
 
+    /*
+     * @param   object $conversion  redbean conversion object
+     * @return  string              File path of covenverted file
+     */
     public function processConversion($conversion)
     {
         $this->app->log->info(__FUNCTION__);
