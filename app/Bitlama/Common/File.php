@@ -35,13 +35,12 @@ class File {
                 if ($this->isShortMimeType($key))
                     return $key;
 
-            throw new \InvalidMimeType());
+            throw new \InvalidMimeType();
             LogWriter::debug("Invalid mime type of:".$finfo->file($this->filePath, FILEINFO_MIME_TYPE));
 
         }
         else
         {
-            el ($this->filePath);
             return $finfo->file($this->filePath, FILEINFO_MIME_TYPE);
         }
     }
@@ -57,7 +56,7 @@ class File {
         if (!in_array($type, array_keys($mimetypes)))
             assert("Invalid mime type selected!");
 
-        global $app;
+        global $app; // sorry!
         $app->log->debug("File long mime type detected as: ".$this->getMimeType(false));
 
         return in_array($this->getMimeType(false), $mimetypes[$type]);
