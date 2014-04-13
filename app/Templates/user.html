@@ -1,4 +1,7 @@
 <h3>{{ user.alias }}</h3>
+<p>Member since: {{ user.getRegisteredDateTime|date("d F Y") }}</p>
+<p>Last seen: {{ user.getLoginDateTime|date("d F Y") }}</p>
+
 
 <h3>Sounds:</h2>
 {{ renderedSounds|raw }}
