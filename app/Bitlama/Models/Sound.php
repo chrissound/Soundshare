@@ -183,4 +183,15 @@ class Sound extends \Bitlama\Models\BaseModel {
     {
         return $this->presentOgg;
     }
+
+    /*
+     * @return DateTime
+     */
+    public function getCreatedDateTime()
+    {
+        $dateTime = new \DateTime();
+        $dateTime->setTimestamp($this->bean->createdTimestamp);
+        el($dateTime);
+        return $dateTime;
+    }
 }

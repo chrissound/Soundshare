@@ -351,15 +351,15 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $userInstanceRecord = $controller->app->datasource->load('user', $userInstance->getUserId());
 
                 $soundRecord = call_user_func($controller->app->model, 'sound');
-                $soundRecord->title =           $requestData['title'];
-                $soundRecord->description =     $requestData['description'];
-                $soundRecord->user_id =         $userInstance->getUserId();
+                $soundRecord->title =               $requestData['title'];
+                $soundRecord->description =         $requestData['description'];
+                $soundRecord->user_id =             $userInstance->getUserId();
+                $soundRecord->createdTimestamp =    time();
 
-                // Save record and mapping (
+                // Save record and mapping to user
                 $soundRecordMeta['id'] =    $controller->app->datasource->store($soundRecord);
                 $userInstanceRecord->ownSound[] = $soundRecord;
                 $controller->app->datasource->store($soundRecord);
-                // )
 
                 $soundRecord->loadFile($_FILES['sound_file']['tmp_name']);
                 $soundRecord->createConversions();
