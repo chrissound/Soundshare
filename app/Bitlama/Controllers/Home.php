@@ -14,10 +14,10 @@ class Home extends \Bitlama\Controllers\BaseController {
         $this->app->get('/sounds/:page', function ($page) use($controller) {
 
             $userInstance = new \Bitlama\Auth\User();
-            $sounds = $this->app->datasource->findAll('sound', 'WHERE present_files = 1 ORDER BY id LIMIT ?,?', array(
+            $sounds = $this->app->datasource->findAll('sound', 'WHERE present_files = 1 AND approve = 1 ORDER BY id DESC LIMIT ?,?', array(
                 ($page-1) * \Bitlama\Common\Bootstrap::$soundsPageSize,
                 \Bitlama\Common\Bootstrap::$soundsPageSize));
-            $soundCount = $this->app->datasource->count('sound', 'WHERE present_files = 1');
+            $soundCount = $this->app->datasource->count('sound', 'WHERE present_files = 1 AND approve = 1');
 
             // dependency injection candidate
             foreach($sounds as $sound)
@@ -78,4 +78,3 @@ class Home extends \Bitlama\Controllers\BaseController {
         })->conditions(array('page' => '\d+'));;
     }
 }
-

@@ -1,5 +1,5 @@
 <p>{{ title }}:</p>
-<table>
+<table class='table'>
     <tr>
         {% for header in headers %}
             <th>{{ header }}</th>
@@ -8,7 +8,7 @@
     {% for record in records %}
         <tr>
             {% for element in record %}
-            <td>{{ element}}</td>
+            <td>{{ element|raw }}</td>
             {% endfor %}
         </tr>
     {% endfor %}
