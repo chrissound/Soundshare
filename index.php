@@ -62,9 +62,10 @@ class MyModelFormatter implements RedBean_IModelFormatter {
     }
 }
 use RedBean_Facade as R;
-//R::setup('pgsql:host=localhost;dbname=ssrbsm', 'bitula','bitulacoin');
-//R::setup('mysql:host=localhost;dbname=ssrbsm', 'root','4661');
-R::setup('mysql:host=localhost;dbname=ssrbsm', 'root','1234');
+R::setup(
+    Bitlama\Common\Config::dbEngine.':host='.Bitlama\Common\Config::dbHost.';dbname='.Bitlama\Common\Config::dbName,
+    Bitlama\Common\Config::dbUser,
+    Bitlama\Common\Config::dbPassword);
 $formatter = new MyModelFormatter;
 RedBean_ModelHelper::setModelFormatter($formatter);
 $app->container->singleton('datasource', function(){
