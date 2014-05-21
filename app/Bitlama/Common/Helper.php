@@ -56,4 +56,19 @@ class Helper {
         else
             return $url;
     }
+
+    static public function generateRandomString($length = 16)
+    {
+        if (!is_int($length))
+            throw new \InvalidInt();
+
+        $charBucket = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $charBucketLength = strlen($charBucket);
+
+        $string = '';
+        for($i=0;$i<$length;$i++)
+            $string .= $charBucket[rand(0,$charBucketLength-1)];
+
+        return $string;
+    }
 }

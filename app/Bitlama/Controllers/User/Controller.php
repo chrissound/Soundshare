@@ -53,7 +53,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
             }
 
-
+            /* @TODO filter should be instantiated here - as it's confusing*/
             $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'alnum');
             $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'strlenMin',    3);
             $controller->app->filter->addSoftRule('password',        \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
@@ -69,13 +69,22 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             if ($controller->app->filter->values($validationData)) {
 
+                $activationRecord = call_user_func($controller->app->model, 'activation');
+                $activationRecord->code = \Bitlama\Common\Helper::generateRandomString(32);
+                $activationRecord->activated = false;
+
                 $userRecord = call_user_func($controller->app->model, 'user');
                 $userRecord->alias =                $validationData['alias'];
                 $userRecord->email =                $validationData['email'];
                 $userRecord->password =             md5($validationData['password'] . "6krfcoEsY2DUJYnxZc36HDKnyRYHE"); // I could be using something mo
                 $userRecord->registeredTimestamp =  time();
+                $userRecord->ownActivation[] = $activationRecord;
+
                 $controller->app->datasource->store($userRecord);
                 $controller->app->response->redirect(\Bitlama\Common\Helper::getUrl('/'));
+
+
+
             }
             else
             {
