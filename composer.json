@@ -4,7 +4,7 @@
             "Bitlama\\": "app/"}
      },
     "require": {
-        "swiftmailer/swiftmailer": "5.2.*",
+        "swiftmailer/swiftmailer": "@stable",
         "gabordemooij/redbean": "3.5.*",
         "slim/slim": "2.*",
         "slim/views": "0.1.*",
