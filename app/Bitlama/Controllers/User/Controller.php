@@ -79,12 +79,17 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $userRecord->password =             md5($validationData['password'] . "6krfcoEsY2DUJYnxZc36HDKnyRYHE"); // I could be using something mo
                 $userRecord->registeredTimestamp =  time();
                 $userRecord->ownActivation[] = $activationRecord;
-
                 $controller->app->datasource->store($userRecord);
+
+                \Bitlama\Common\Helper::sendEmail(
+                    $userRecord->alias,
+                    $userRecord->email,
+                    "Soundshare - Activate Account",
+                    nl2br(\Bitlama\Common\Helper::render('register.mail', $controller->getViewDataForRegisterMail($userRecord, $activationRecord, true), $controller->app)),
+                    \Bitlama\Common\Helper::render('register.mail', $controller->getViewDataForRegisterMail($userRecord, $activationRecord, false), $controller->app),
+                    $controller->app);
+
                 $controller->app->response->redirect(\Bitlama\Common\Helper::getUrl('/'));
-
-
-
             }
             else
             {
@@ -109,6 +114,34 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $controller->app->response->redirect(\Bitlama\Common\Helper::getUrl('/user/register'));
             }
         });
+
+        $this->app->get('/user/activate/:userId/:activationCode', function ($userId, $activationCode) use ($controller) {
+
+            $userRecord = $controller->app->datasource->findOne('user', 'id = ?', [$userId]);
+            $activationRecord = reset($userRecord->ownActivation); // why doesn't $userRecord->activation work?!??!?! 
+
+            if ($userRecord
+                && $activationRecord
+                && !$activationRecord->activated
+                && $activationRecord->code === $activationCode) 
+            {
+                $activationRecord->activated = true;
+                $controller->app->datasource->store($activationRecord);
+
+                $messages[] = ['title'=>'Account activated', 'content'=>'Account activated.'];
+                $controller->app->flash('messages', $messages);
+                $controller->app->response->redirect('/');
+            }
+            else
+            {
+                \LogWriter::info(["Invalid activation request", $userId, $activationCode, $activationRecord->code]);
+                $messages[] = ['title'=>'Invalid activation', 'content'=>'Invalid activation request.'];
+                $controller->app->flash('messages', $messages);
+                $controller->app->response->redirect('/');
+            }
+
+
+        })->name('routeUserActivate');
 
         $this->app->get('/user/login', function () use ($controller) {
 
@@ -300,7 +333,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $requestUrl = "/user/upload_sound";
             $this->authorize($requestUrl);
-
+            $this->authorizeActivation();
 
             $previousFormValues = isset($_SESSION['slim.flash']['fields']) ? $_SESSION['slim.flash']['fields'] : array();
             $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
@@ -335,12 +368,6 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $this->authorize();
             $userInstance = new \Bitlama\Auth\User;
-
-            if (!$userInstance->IsLoggedIn())
-            {
-                $controller->app->response->redirect('/');
-                return null;
-            }
 
             $requestData = [
                 'title' =>                  $controller->app->request->post('title'),
@@ -442,6 +469,18 @@ class Controller extends \Bitlama\Controllers\BaseController {
         });
     }
 
+    protected function getViewDataForRegisterMail($user, $activation, $html)
+    {
+        return [
+            'user' => $user->alias,
+            'activation' => [
+                'url' => \Bitlama\Common\Slim::urlFor('routeUserActivate', ['userId' => $user->id, 'activationCode' => $activation->code])
+            ],
+            'email' => [
+                'html' => $html,
+            ]
+        ];
+    }
 
     protected function getCommentForm($url, $fieldValues)
     {

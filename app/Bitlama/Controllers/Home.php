@@ -8,6 +8,9 @@ class Home extends \Bitlama\Controllers\BaseController {
     {
         $controller = $this;
         $this->app->get('/', function () use($controller) {
+
+            $controller->app->flashKeep();
+
             $controller->app->redirect(\Bitlama\Common\Helper::getUrl('/sounds/1'));
         });
 
@@ -28,10 +31,15 @@ class Home extends \Bitlama\Controllers\BaseController {
 
                 if (!($sound->isPresentMp3() || $sound->isPresentOgg()))
                 {
-                    $this->app->log->debug("Sound has no has matches! Id: ". $sound->id);
-                    $this->app->log->debug("Files: ". print_r($sound->getFiles(),1));
+                    \LogWriter::debug("Sound has no has matches! Id: ". $sound->id);
+                    \LogWriter::debug("Files: ". print_r($sound->getFiles(),1));
                 }
             }
+
+            $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+
+            $views['renderedMessages'] = \Bitlama\Common\Helper::render(
+                'notify.html', ['messages' => $messages], $controller->app);
 
             $views['RenderedSounds'] =      \Bitlama\Common\Helper::render(
                 'sounds.html',
@@ -60,13 +68,13 @@ class Home extends \Bitlama\Controllers\BaseController {
                 $views['RenderedInfoBar'] = \Bitlama\Common\Helper::render('infobar.html', ['user'=> ['alias' => $user->alias]], $this->app);
                 $viewBase = [
                     'content' => 
-                        $views['RenderedInfoBar'] . $views['RenderedHomePage'] . $views['RenderedSounds'] .$views['RenderedPagination'],
+                        $views['RenderedInfoBar'] . $views['renderedMessages'] . $views['RenderedHomePage'] . $views['RenderedSounds'] .$views['RenderedPagination'],
                 ];
             }
             else
             {
                 $viewBase = [
-                    'content' => $views['RenderedHomePage'] . $views['RenderedSounds'] . $views['RenderedPagination'],
+                    'content' => $views['renderedMessages'] . $views['RenderedHomePage'] . $views['RenderedSounds'] . $views['RenderedPagination'],
                 ];
             }
 

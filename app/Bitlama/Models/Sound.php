@@ -35,7 +35,6 @@ class Sound extends \Bitlama\Models\BaseModel {
             $this->app->log->debug("Sound id: ".            $this->bean->id);
             $this->app->log->debug("Sound determined as processing.");
             $this->app->log->debug("Sound files: ".         print_r($this->getFiles(),true));
-            $this->app->log->debug("Sound conversions: ".   print_r($this->getConversions(),true));
             return true;
         }
         else

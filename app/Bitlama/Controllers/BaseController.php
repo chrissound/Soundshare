@@ -42,8 +42,8 @@ class BaseController {
 
             if (\Bitlama\Auth\User::getUserId() == 1)
             {
-                foreach($this->app->router->listRoutes('', false) as $route)
-                    $devitems[] = ['type'=>'item', 'title' => $route, 'href' => $route];
+                //foreach($this->app->router->listRoutes('', false) as $route)
+                //    $devitems[] = ['type'=>'item', 'title' => $route, 'href' => $route];
                 $devitems[] = ['type'=>'item', 'title' => 'Background Process woo!', 'href' => '/background_process/abracadabra'];
 
 
@@ -83,6 +83,37 @@ class BaseController {
             $this->app->redirect(\Bitlama\Common\Helper::getUrl("/user/login", ['redirectUrl'=>$redirectUrl]));
             $this->app->stop();
             die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+        }
+    }
+
+    /*
+     * Redirect user to login screen and then intern redirect back to redirect url.
+     */
+    protected function authorizeActivation()
+    {
+        $this->authorize();
+
+        $userInstance = new \Bitlama\Auth\User;
+        $userInstanceRecord = $this->app->datasource->load('user', \Bitlama\Auth\User::getUserId());
+        $activationRecord = reset($userInstanceRecord->ownActivation);
+
+        if ($activationRecord)
+        {
+            if (!$activationRecord->activated)
+            {
+                $messages = [];
+                $messages[] = ['title'=>'Account activation required.', 'content'=>'Please first activate your account in order to proceed.'];
+                $this->app->flash('messages', $messages);
+
+                $this->app->log->debug("Redirect to: ". \Bitlama\Common\Helper::getUrl("/"));
+                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/"));
+                $this->app->stop();
+                die();
+            }
+        }
+        else
+        {
+            throw new \SeriouslyBad();
         }
     }
 

@@ -1,7 +1,7 @@
 Welcome aboard {{ user.alias}}!
 
 {% if email.html %} 
-    Please verify your account: <a href="{{ activation.url }}">Activate</a>
+    Please verify your account: <a href="{{ activation.url }}">activate</a>
 {% else %} 
     Please verify your account: {{ activation.url }}
 {% endif %} 

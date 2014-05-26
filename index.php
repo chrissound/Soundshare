@@ -21,13 +21,37 @@ class NoSourceFileFound extends Exception {
 }
 class InvalidMimeType extends Exception {
 }
+class InvalidInt extends Exception {
+}
 
 // Not too sure whats the best way to handle this. Guess a static class would be easiest to change later on though.
 class LogWriter {
     static $app;
+
     public static function debug($args)
     {
-        call_user_func_array(array($app->debug, "log"), $args);
+        foreach((array)$args as $arg)
+        {
+            //call_user_func_array(array(self::$app->log, "debug"), (array)$arg);
+        }
+    }
+
+    public static function info($args)
+    {
+        foreach((array)$args as $arg)
+            call_user_func_array(array(self::$app->log, "info"), (array)$arg);
+    }
+
+    public static function notice($args)
+    {
+        foreach((array)$args as $arg)
+            call_user_func_array(array(self::$app->log, "notice"), (array)$arg);
+    }
+
+    public static function warning($args)
+    {
+        foreach((array)$args as $arg)
+            call_user_func_array(array(self::$app->log, "warning"), (array)$arg);
     }
 }
 
@@ -42,10 +66,9 @@ $app = new \Slim\Slim([
     'log.writer' => $logWriter
 ]);
 
+$app->log->setLevel(\Slim\Log::DEBUG);
 LogWriter::$app = $app;
 
-
-$app->log->setLevel(\Slim\Log::DEBUG);
 
 $app->view->parserExtensions = [
     new Twig_Extension_Debug()
@@ -83,12 +106,12 @@ $app->filter = require "vendor/aura/filter/scripts/instance.php";
 
 
 // Bitlama  
-\Bitlama\Common\Bootstrap::Init(__DIR__.'/');
+\Bitlama\Common\Bootstrap::Init(__DIR__.'/', $app);
 $controllers = [ 
     new \Bitlama\Controllers\Admin\Controller($app),
     new \Bitlama\Controllers\User\Controller($app),
     new \Bitlama\Controllers\Home($app),
-    new \Bitlama\Controllers\BackgroundProcessing($app)
+    new \Bitlama\Controllers\BackgroundProcessing($app),
 ];
 
 foreach($controllers as $controller)

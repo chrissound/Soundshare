@@ -1,4 +1,7 @@
-{% for message in messages %}
-    <p>{{ message.title }}</p>
-    <p>{{ message.content }}</p>
-{% endfor %}
+{% if messages|length > 0 %}
+    <br />
+    {% for message in messages %}
+        <p><strong>{{ message.title }}</strong></p>
+        <p>{{ message.content }}</p>
+    {% endfor %}
+{% endif %}

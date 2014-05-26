@@ -71,4 +71,37 @@ class Helper {
 
         return $string;
     }
+
+    static public function sendEmail($to, $toAddress, $subject, $htmlMessage, $message, $app)
+    {
+        try {
+            $emailRecord = call_user_func($app->model, 'email');
+            $emailRecord->to            = $to;
+            $emailRecord->subject       = $subject;
+            $emailRecord->htmlMessage   = $htmlMessage;
+            $emailRecord->message       = $message;
+            $emailRecord->success       = $message;
+            $app->datasource->store($emailRecord);
+
+            $transport = \Swift_SmtpTransport::newInstance(\Bitlama\Common\Config::emailHost, \Bitlama\Common\Config::emailPort)
+              ->setUsername(\Bitlama\Common\Config::emailUsername)
+              ->setPassword(\Bitlama\Common\Config::emailPassword);
+
+            $mailer = \Swift_Mailer::newInstance($transport);
+            $message = \Swift_Message::newInstance()
+                ->setSubject($subject)
+                ->setFrom(array(\Bitlama\Common\Config::emailFromAddress => \Bitlama\Common\Config::emailFrom))
+                ->setTo(array($toAddress => $to))
+                ->setBody($message)
+                ->addPart($htmlMessage, 'text/html')
+                ->setReturnPath(\Bitlama\Common\Config::emailFromAddress);
+                
+            $emailRecord->success = $mailer->send($message);
+
+            $app->datasource->store($emailRecord);
+        } catch (Exception $e)
+        {
+            \LogWriter::debug($e); 
+        }
+    }
 }

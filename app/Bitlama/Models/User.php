@@ -10,7 +10,6 @@ class User extends \Bitlama\Models\BaseModel {
     {
         $dateTime = new \DateTime();
         $dateTime->setTimestamp($this->bean->loginTimestamp);
-        el($dateTime);
         return $dateTime;
     }
 
@@ -21,7 +20,6 @@ class User extends \Bitlama\Models\BaseModel {
     {
         $dateTime = new \DateTime();
         $dateTime->setTimestamp($this->bean->registeredTimestamp);
-        el($dateTime);
         return $dateTime;
     }
 }
