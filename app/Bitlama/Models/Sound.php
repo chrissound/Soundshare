@@ -110,8 +110,8 @@ class Sound extends \Bitlama\Models\BaseModel {
             $soundTypes[$mimetype][] = $file;
         }
 
-        $this->app->log->debug($this->fileMimeTypes, 'ftypes');
-        $this->app->log->debug($soundTypes, 'stypes');
+        \LogWriter::debug($this->fileMimeTypes, 'ftypes');
+        \LogWriter::debug($soundTypes, 'stypes');
         
 
         // Create the conversion records
