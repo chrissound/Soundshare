@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "4d59f0a59298e4ef3d1d664d61d220d9",
+    "hash": "76ac6f48cadf65f51d408b071ba7efdf",
     "packages": [
         {
             "name": "aura/filter",
@@ -118,6 +118,16 @@
                 "installer"
             ],
             "time": "2012-11-26 21:35:57"
+        },
+        {
+            "name": "chrissound/recaptchaMirror",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "http://github.com/chrissound/recaptchaMirror",
+                "reference": "master"
+            },
+            "type": "library"
         },
         {
             "name": "gabordemooij/redbean",
