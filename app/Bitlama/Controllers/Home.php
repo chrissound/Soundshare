@@ -23,7 +23,7 @@ class Home extends \Bitlama\Controllers\BaseController {
             $soundCount = $this->app->datasource->count('sound', 'WHERE present_files = 1 AND approve = 1');
 
             // dependency injection candidate
-            foreach($sounds as $sound)
+            foreach($sounds as $key => $sound)
             {
                 $sound->setApp($controller->app);
                 $sound->initialize();
@@ -33,6 +33,9 @@ class Home extends \Bitlama\Controllers\BaseController {
                 {
                     \LogWriter::debug("Sound has no has matches! Id: ". $sound->id);
                     \LogWriter::debug("Files: ". print_r($sound->getFiles(),1));
+
+                    unset($sounds[$key]); 
+                    $soundCount =- 1;
                 }
             }
 
