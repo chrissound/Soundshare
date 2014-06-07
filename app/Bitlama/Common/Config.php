@@ -18,4 +18,5 @@ abstract class Config {
     const emailFrom =           '';
     const emailFromAddress =    '';
 
+    const soundEntriesPerPage = 15;
 }

@@ -18,8 +18,8 @@ class Home extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User();
             $sounds = $this->app->datasource->findAll('sound', 'WHERE present_files = 1 AND approve = 1 ORDER BY id DESC LIMIT ?,?', array(
-                ($page-1) * \Bitlama\Common\Bootstrap::$soundsPageSize,
-                \Bitlama\Common\Bootstrap::$soundsPageSize));
+                ($page-1) * \Bitlama\Common\Config::soundEntriesPerPage,
+                \Bitlama\Common\Config::soundEntriesPerPage));
             $soundCount = $this->app->datasource->count('sound', 'WHERE present_files = 1 AND approve = 1');
 
             // dependency injection candidate
@@ -57,7 +57,7 @@ class Home extends \Bitlama\Controllers\BaseController {
                 function($pageNumber){
                     return "/sounds/{$pageNumber}";
                 },
-                $page, \Bitlama\Common\Bootstrap::$soundsPageSize);
+                $page, \Bitlama\Common\Config::soundEntriesPerPage);
             $views['RenderedPagination'] =  \Bitlama\Common\Helper::render('pagination.html', ['pages'=>$pages], $this->app);
 
 
