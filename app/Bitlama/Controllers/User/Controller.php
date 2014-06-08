@@ -53,19 +53,28 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
             }
 
-            /* @TODO filter should be instantiated here - as it's confusing*/
-            $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'alnum');
-            $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'strlenMin',    3);
-            $controller->app->filter->addSoftRule('password',        \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
-            $controller->app->filter->addSoftRule('password_repeat', \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
-            $controller->app->filter->addSoftRule('email',           \Aura\Filter\RuleCollection::IS,    'email');
+            // Refactor this somewhere into a nice method?
+            $locator = $controller->app->filter->getRuleLocator();
+            $locator->set('usernameAvaliable', function () use($controller) {
+                $rule = call_user_func($controller->app->filterRule, 'UsernameAvailable');
+                return $rule;
+            });
 
+            /* @TODO filter should be instantiated here - as it's confusing*/
             $validationData = [
                 'alias' =>              $controller->app->request->post('alias'),
                 'password' =>           $controller->app->request->post('password'),
                 'password_repeat' =>    $controller->app->request->post('password_repeat'),
                 'email' =>              $controller->app->request->post('email'),
             ];
+
+            $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'usernameAvaliable', $validationData['alias']);
+            $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'alnum');
+            $controller->app->filter->addSoftRule('alias',           \Aura\Filter\RuleCollection::IS,    'strlenMin',    3);
+            $controller->app->filter->addSoftRule('password',        \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
+            $controller->app->filter->addSoftRule('password_repeat', \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
+            $controller->app->filter->addSoftRule('email',           \Aura\Filter\RuleCollection::IS,    'email');
+
 
             if ($controller->app->filter->values($validationData)) {
 

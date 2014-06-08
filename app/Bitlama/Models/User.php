@@ -22,4 +22,21 @@ class User extends \Bitlama\Models\BaseModel {
         $dateTime->setTimestamp($this->bean->registeredTimestamp);
         return $dateTime;
     }
+
+    public function exists(array $filter)
+    {
+        $query = [];
+        $params = [];
+        if (isset($filter['alias']))
+        {
+            $query[] = 'alias = ?';
+            $params[] = $filter['alias'];
+        }
+        else
+            throw \InvalidArgument();
+
+        $queryString = implode(" ", $query);
+            
+        return (bool)$this->app->datasource->findOne('user',  $queryString, $params);
+    }
 }

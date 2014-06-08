@@ -9,10 +9,10 @@
         "slim/slim": "2.*",
         "slim/views": "0.1.*",
         "twig/twig": "1.*",
-        "aura/filter" : "*.*",
         "phpmd/phpmd" : "1.4.*",
         "chrissound/recaptchaMirror" : "*",
-        "robmorgan/phinx": "*"
+        "robmorgan/phinx": "*",
+        "aura/Aura.Filter": "*"
     },
     "repositories": [
         {

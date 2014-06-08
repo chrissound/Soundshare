@@ -1,26 +1,27 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "f812693f21c8e153e32e4630a28f4c12",
+    "hash": "25ee36864a8297b891588e794152dddf",
     "packages": [
         {
             "name": "aura/filter",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Filter.git",
-                "reference": "bb6486f69721baec5ef7b1e75c44f509055f6cde"
+                "reference": "f5610ef59a543b71dc9fa2bf63b698204f6843c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Filter/zipball/bb6486f69721baec5ef7b1e75c44f509055f6cde",
-                "reference": "bb6486f69721baec5ef7b1e75c44f509055f6cde",
+                "url": "https://api.github.com/repos/auraphp/Aura.Filter/zipball/f5610ef59a543b71dc9fa2bf63b698204f6843c8",
+                "reference": "f5610ef59a543b71dc9fa2bf63b698204f6843c8",
                 "shasum": ""
             },
             "require": {
-                "aura/installer-default": ">=1.0.0",
+                "aura/installer-default": "1.0.*",
                 "php": ">=5.4.0"
             },
             "type": "aura-package",
@@ -49,7 +50,7 @@
                     "homepage": "https://github.com/auraphp/Aura.Filter/contributors"
                 },
                 {
-                    "name": "Benjamin Geißler",
+                    "name": "Benjamin Geissler",
                     "email": "benjamin.geissler@gmail.com"
                 },
                 {
@@ -76,7 +77,7 @@
                 "sanitize",
                 "validate"
             ],
-            "time": "2013-09-09 00:00:00"
+            "time": "2014-05-31 00:00:00"
         },
         {
             "name": "aura/installer-default",

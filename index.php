@@ -23,6 +23,8 @@ class InvalidMimeType extends Exception {
 }
 class InvalidInt extends Exception {
 }
+class InvalidArgument extends Exception {
+}
 
 // Not too sure whats the best way to handle this. Guess a static class would be easiest to change later on though.
 class LogWriter {
@@ -96,9 +98,24 @@ $app->container->singleton('datasource', function(){
     return $fml;
 });
 $app->model = $app->container->protect(function($model) use($app) {
+    
    $modelInstance =  $app->datasource->dispense($model);
    $modelInstance->setApp($app);
    return $modelInstance;
+});
+$app->filterRule = $app->container->protect(function($rule) use ($app) {
+    $bob = new Bitlama\Miscellaneous\UsernameAvailable();
+    $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
+    $filterRuleInstance = new $filterRuleInstance;
+    $filterRuleInstance->setApp($app);
+
+    $translator = $app->filter->getTranslator();
+    foreach($filterRuleInstance->getMessages() as $key => $message)
+    {
+        $translator->set($key, $message);
+    }
+
+    return $filterRuleInstance;
 });
 
 // Aura Filter
