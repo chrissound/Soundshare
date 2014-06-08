@@ -195,7 +195,6 @@ class Sound extends \Bitlama\Models\BaseModel {
     {
         $dateTime = new \DateTime();
         $dateTime->setTimestamp($this->bean->createdTimestamp);
-        el($dateTime);
         return $dateTime;
     }
 }

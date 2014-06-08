@@ -81,7 +81,7 @@ class ImportOldSoundshare extends AbstractMigration
         // users activation
         $activationTable = $this->table('activation');
         $activationTable
-            ->addColumn('code', 'integer')
+            ->addColumn('code', 'string')
             ->addColumn('activated', 'integer')
             ->addColumn('user_id', 'integer')
             ->addIndex(array('id'), array('unique' => true))
