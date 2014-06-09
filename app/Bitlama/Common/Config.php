@@ -18,5 +18,7 @@ abstract class Config {
     const emailFrom =           '';
     const emailFromAddress =    '';
 
+    const cloudConvertKey = "";
+
     const soundEntriesPerPage = 15;
 }

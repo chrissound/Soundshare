@@ -58,7 +58,7 @@ class Convert {
             $process = $convert->createProcess(
                 $sourcefile->getMimeType(true),
                 $conversion->output,
-                "J2Ng8EYv6op9AN1owqlprrvY2MgPwnkxotM1R2KJpF9ihFtWmZcfdnnla4trqXUrSUsRNcLtR5CzVlf6fbAa-w");
+                \Bitlama\Common\Config::cloudConvertKey);
             $process->setOption('audio_bitrate', 256);
             $process->upload($sourcefile->getFilePath(), $conversion->output); // upload
 
@@ -81,7 +81,12 @@ class Convert {
 
         $convert = new \Bitlama\Common\Cloudconvert;
         $convert = $convert->useProcess($conversion->processurlid);
-        $response = $convert->status();
+        try {
+            $response = $convert->status();
+        } catch (\Exception $e)
+        {
+            throw new \ConversionNotFinished($e->getMessage());
+        }
 
         $this->app->log->info('response');
         $this->app->log->info(print_r($response, true));

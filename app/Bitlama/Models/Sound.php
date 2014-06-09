@@ -124,6 +124,10 @@ class Sound extends \Bitlama\Models\BaseModel {
                 $conversion->output = $type;
                 $this->app->datasource->store($conversion);
             }
+
+        $this->bean->processing = $this->isProcessing();
+        $this->app->datasource->store($this->bean);
+
     }
 
     public function getFiles()
