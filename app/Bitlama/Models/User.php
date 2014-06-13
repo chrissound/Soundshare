@@ -35,7 +35,7 @@ class User extends \Bitlama\Models\BaseModel {
         else
             throw \InvalidArgument();
 
-        $queryString = implode(" ", $query);
+        $queryString = implode(" AND ", $query);
             
         return (bool)$this->app->datasource->findOne('user',  $queryString, $params);
     }

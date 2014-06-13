@@ -60,13 +60,22 @@ class LogWriter {
 
 
 // Slim
-$logWriter = new \Slim\LogWriter(fopen('/home/webroot/logs/bitlama_errors.log', 'a'));
-$app = new \Slim\Slim([
+$appConfigSettings = [
     'view' => new \Slim\Views\Twig(),
     'templates.path' => './app/Templates',
-    'log.enabled' => true,
-    'log.writer' => $logWriter
-]);
+];
+
+if (isset(\Bitlama\Common\Config::log) AND file_exists(\Bitlama\Common\Config::log))
+{
+    $logWriter = new \Slim\LogWriter(fopen(\Bitlama\Common\Config::log, 'a'));
+    $appConfigSettings = array_merge($appConfigSettings, [
+        'log.enabled' => true,
+        'log.writer' => $logWriter
+    ]);
+}
+
+
+$app = new \Slim\Slim($appConfigSettings);
 
 $app->log->setLevel(\Slim\Log::DEBUG);
 LogWriter::$app = $app;
