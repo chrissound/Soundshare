@@ -246,13 +246,25 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             if($userRecord = $controller->app->datasource->findOne('user', 'id = ?', [$userId]))
             {
+                if (\Bitlama\Auth\User::isLoggedIn() && \Bitlama\Auth\User::getUserId() == $userId)
+                {
+                    $userIsOwner = true;
+                }
+                else
+                    $userIsOwner = false;
+
                 $sounds = (array)$userRecord->ownSound;
                 $comments = (array)$userRecord->ownComment;
-                foreach($sounds as $sound)
-                {
-                    $sound->setApp($controller->app);
-                    $sound->initialize();
-                }
+                foreach($sounds as $index => $sound)
+                    if ($sound->approve OR $userIsOwner)
+                    {
+                        $sound->setApp($controller->app);
+                        $sound->initialize();
+                    }
+                    else
+                    {
+                        unset($sounds[$index]);
+                    }
 
                 foreach($comments as $comment)
                 {
