@@ -139,6 +139,12 @@ $app->filterRule = $app->container->protect(function($rule) use ($app) {
     return $filterRuleInstance;
 });
 
+$captcha = new Captcha\Captcha();
+$captcha->setPublicKey(\Bitlama\Common\Config::recaptchaPublicKey);
+$captcha->setPrivateKey(\Bitlama\Common\Config::recaptchaPrivateKey);
+$captcha->setTheme('clean');
+$app->captcha = $captcha;
+
 // Aura Filter
 $app->filter = require "vendor/aura/filter/scripts/instance.php";
 

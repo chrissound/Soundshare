@@ -24,10 +24,14 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $previousFormValues = isset($_SESSION['slim.flash']['fields']) ? $_SESSION['slim.flash']['fields'] : array();
             $validationMessages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
-
+            $captcha = $controller->app->captcha;
             $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Register']],$controller->app);
             $views['renderedRegistrationForm'] = \Bitlama\Common\Helper::render(
-                'form.html', $controller->getRegisterForm($registerUrl, $previousFormValues), $controller->app);
+                'register_form.html',
+                array_merge(
+                    $controller->getRegisterForm($registerUrl, $previousFormValues),
+                    ['captcha' => $captcha->html()]),
+                $controller->app);
             $views['renderedMessages'] = \Bitlama\Common\Helper::render(
                 'notify.html', ['messages' => $validationMessages], $controller->app);
 

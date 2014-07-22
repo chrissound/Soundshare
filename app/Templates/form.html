@@ -1,23 +1,4 @@
 <form class="form-horizontal" method='post' action='{{ action }}'>
-        {% for field in fields %}
-            <div class="form-group">
-            <label class="col-sm-2 control-label">{{ field.title }}</label>
-
-            <div class="col-sm-4">
-                {% if field.type == 'textshort' %}
-                    <input class="form-control"     type='text'      name='{{ field.name }}' value='{{ field.value }}' /> 
-                {% elseif field.type == 'textsecure' %}
-                    <input class="form-control"     type='password'  name='{{ field.name }}' value='{{ field.value }}' /> 
-                {% elseif field.type == 'file' %}
-                    <input class="form-control"     type='file'      name='{{ field.name }}' /> 
-                {% elseif field.type == 'textlong' %}
-                    <textarea class="form-control"  name='{{ field.name }}'>{{ field.value }}</textarea>
-                {% elseif field.type == 'hidden' %}
-                    <input class="form-control"     type='hidden'    name='{{ field.name }}' value='{{ field.value }}' />
-                {% endif %}
-            </div>
-            <br />
-            </div>
-        {% endfor %}
-        <input class="btn btn-default col-md-offset-2" type='submit' value='Submit' />
+    {% include 'form_fields.html' %}
+    {% include 'form_submit.html' %}
 </form>

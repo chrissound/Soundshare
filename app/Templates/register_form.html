@@ -1,0 +1,11 @@
+<form class="form-horizontal" method='post' action='{{ action }}'>
+    {% include 'form_fields.html' %}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Captcha</label>
+        <div class="col-sm-4">
+            {{ captcha|raw}}
+        </div>
+        <br />
+    </div>
+    {% include 'form_submit.html' %}
+</form>
