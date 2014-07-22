@@ -32,26 +32,38 @@ class LogWriter {
 
     public static function debug($args)
     {
+        foreach($args as &$arg)
+            $arg = !is_string($arg) ? var_export($arg, true): $arg;
+
         foreach((array)$args as $arg)
         {
-            //call_user_func_array(array(self::$app->log, "debug"), (array)$arg);
+            call_user_func_array(array(self::$app->log, "debug"), (array)$arg);
         }
     }
 
     public static function info($args)
     {
+        foreach($args as &$arg)
+            $arg = !is_string($arg) ? var_export($arg, true): $arg;
+
         foreach((array)$args as $arg)
             call_user_func_array(array(self::$app->log, "info"), (array)$arg);
     }
 
     public static function notice($args)
     {
+        foreach($args as &$arg)
+            $arg = !is_string($arg) ? var_export($arg, true): $arg;
+
         foreach((array)$args as $arg)
             call_user_func_array(array(self::$app->log, "notice"), (array)$arg);
     }
 
     public static function warning($args)
     {
+        foreach($args as &$arg)
+            $arg = !is_string($arg) ? var_export($arg, true): $arg;
+
         foreach((array)$args as $arg)
             call_user_func_array(array(self::$app->log, "warning"), (array)$arg);
     }

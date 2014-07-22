@@ -90,8 +90,8 @@ class Sound extends \Bitlama\Models\BaseModel {
             return $source;
         else
         {
-            $this->app->log->debug($files);
-            $this->app->log->debug($soundTypes);
+            \LogWriter::debug($files);
+            \LogWriter::debug($soundTypes);
             throw new \NoSourceFileFound();
         }
     }
