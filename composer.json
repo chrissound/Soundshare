@@ -1,8 +1,15 @@
 {
      "autoload": {
         "psr-0": {
-            "Bitlama\\": "app/"}
+            "Bitlama\\": "app/"
+        }
      },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/chrissound/Aura.Filter"
+        }
+    ],
     "require": {
         "swiftmailer/swiftmailer": "@stable",
         "gabordemooij/redbean": "3.5.*",
@@ -10,27 +17,8 @@
         "slim/views": "0.1.*",
         "twig/twig": "1.*",
         "phpmd/phpmd" : "1.4.*",
-        "chrissound/recaptchaMirror" : "*",
+        "recaptcha/php5": "v1.1.0",
         "robmorgan/phinx": "*",
-        "aura/Aura.Filter": "*"
-    },
-    "repositories": [
-        {
-            "type": "package",
-            "package":
-            {
-                "name": "chrissound/recaptchaMirror",
-                "version": "1.0",
-                "source":
-                {
-                    "type": "git",
-                    "url": "http://github.com/chrissound/recaptchaMirror",
-                    "reference": "master"
-                }
-            },
-            "autoload": {
-                "files": ["chrissound/recaptchaMirror/recaptchalib.php"]
-            }
-        }
-    ]
+        "aura/filter": "dev-develop"
+    }
 }

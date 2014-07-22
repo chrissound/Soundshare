@@ -4,24 +4,18 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "25ee36864a8297b891588e794152dddf",
+    "hash": "882cf4adbced5fa2bed55335432ae0dc",
     "packages": [
         {
             "name": "aura/filter",
-            "version": "1.0.1",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/auraphp/Aura.Filter.git",
-                "reference": "f5610ef59a543b71dc9fa2bf63b698204f6843c8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Filter/zipball/f5610ef59a543b71dc9fa2bf63b698204f6843c8",
-                "reference": "f5610ef59a543b71dc9fa2bf63b698204f6843c8",
-                "shasum": ""
+                "url": "https://github.com/chrissound/Aura.Filter",
+                "reference": "376c5b1118acb969b4bd61cf193c72d19f51c9c4"
             },
             "require": {
-                "aura/installer-default": "1.0.*",
+                "aura/installer-default": "1.0.0",
                 "php": ">=5.4.0"
             },
             "type": "aura-package",
@@ -30,54 +24,25 @@
                     "Aura\\Filter": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-2-Clause"
             ],
             "authors": [
                 {
-                    "name": "Paul M. Jones",
-                    "email": "pmjones88@gmail.com",
-                    "homepage": "http://paul-m-jones.com"
-                },
-                {
-                    "name": "Hari KT",
-                    "email": "kthari85@gmail.com",
-                    "homepage": "http://harikt.com"
-                },
-                {
-                    "name": "Aura.Filter Contributors",
+                    "name": "Aura Contributors",
                     "homepage": "https://github.com/auraphp/Aura.Filter/contributors"
-                },
-                {
-                    "name": "Benjamin Geissler",
-                    "email": "benjamin.geissler@gmail.com"
-                },
-                {
-                    "name": "Pascal Borreli",
-                    "email": "pascal@borreli.com"
-                },
-                {
-                    "name": "Mapthegod",
-                    "email": "nakymaton.hdc@gmail.com"
-                },
-                {
-                    "name": "Daniel Haaker",
-                    "email": "d.haaker@gmail.com"
-                },
-                {
-                    "name": "chrissound",
-                    "email": "chris@soundshare.co.uk"
                 }
             ],
-            "description": "The Aura Filter package provides tools to validate and sanitize data objects and arrays.",
-            "homepage": "http://auraphp.com/Aura.Filter",
+            "description": "The Aura Filter package provider validators and sanitizers for user data.",
+            "homepage": "http://auraphp.github.com/Aura.Filter",
             "keywords": [
                 "filter",
                 "sanitize",
-                "validate"
+                "validate",
+                "validation",
+                "validator"
             ],
-            "time": "2014-05-31 00:00:00"
+            "time": "2014-06-08 13:03:59"
         },
         {
             "name": "aura/installer-default",
@@ -241,6 +206,52 @@
             ],
             "description": "Official version of PHPMD handled with Composer.",
             "time": "2012-12-14 12:25:09"
+        },
+        {
+            "name": "recaptcha/php5",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AlekseyKorzun/reCaptcha-PHP-5.git",
+                "reference": "a38938e881a1cb3647271f666f13a01b0c1687f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AlekseyKorzun/reCaptcha-PHP-5/zipball/a38938e881a1cb3647271f666f13a01b0c1687f3",
+                "reference": "a38938e881a1cb3647271f666f13a01b0c1687f3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Captcha": "Package"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Aleksey Korzun",
+                    "email": "al.ko@webfoundation.net",
+                    "homepage": "http://www.alekseykorzun.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A properly coded PHP 5 reCaptcha class that will allow you to interact with Google's reCaptcha API.",
+            "homepage": "https://github.com/AlekseyKorzun/reCaptcha-PHP-5",
+            "keywords": [
+                "api",
+                "captcha",
+                "google",
+                "php",
+                "recaptcha"
+            ],
+            "time": "2014-07-07 17:21:13"
         },
         {
             "name": "robmorgan/phinx",
@@ -831,8 +842,10 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "swiftmailer/swiftmailer": 0
+        "swiftmailer/swiftmailer": 0,
+        "aura/filter": 20
     },
+    "prefer-stable": false,
     "platform": [],
     "platform-dev": []
 }
