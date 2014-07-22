@@ -347,12 +347,14 @@ class Controller extends \Bitlama\Controllers\BaseController {
             $previousFormValues = isset($_SESSION['slim.flash']['fields']) ? $_SESSION['slim.flash']['fields'] : array();
             $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
 
-            $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Upload Sound']],$controller->app);
-            $views['renderedUploadForm'] =   \Bitlama\Common\Helper::render(
+            $views['renderedHeader'] = \Bitlama\Common\Helper::render(
+                'page_header.html',
+                ['page'=>['header'=>'Upload Sound']],
+                $controller->app);
+            $views['renderedUploadForm'] = \Bitlama\Common\Helper::render(
                 'form_file.html',
                 $controller->getUploadSoundForm($requestUrl, $previousFormValues),
                 $controller->app);
-
             $views['renderedMessages'] = \Bitlama\Common\Helper::render(
                 'notify.html',
                 ['messages' => $messages],
@@ -360,7 +362,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $viewBase = [
                 'title' => 'User Login',
-                'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedUploadForm']
+                'content' => \Bitlama\Common\Helper::implodeIndexed($views, array('renderedHeader','renderedMessages','renderedUploadForm'))
             ];
             $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
             $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
@@ -375,7 +377,6 @@ class Controller extends \Bitlama\Controllers\BaseController {
             $requestUrl = "/user/upload_sound";
             $this->authorize($requestUrl);
 
-            $this->authorize();
             $userInstance = new \Bitlama\Auth\User;
 
             $requestData = [
@@ -400,6 +401,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $soundRecord->description =         $requestData['description'];
                 $soundRecord->user_id =             $userInstance->getUserId();
                 $soundRecord->createdTimestamp =    time();
+                $soundRecord->approve =             false;
 
                 // Save record and mapping to user
                 $soundRecordMeta['id'] =    $controller->app->datasource->store($soundRecord);

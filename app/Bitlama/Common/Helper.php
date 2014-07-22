@@ -24,14 +24,6 @@ class Helper {
         return $app->view->fetch($template);
     }
 
-    static public function session($key)
-    {
-        if (isset($_SESSION[$key]))
-            return $_SESSION[$key];
-        else
-            return null;
-    }
-
     static public function paginate($recordCount, callable $pageLink, $pageCurrent, $pageSize = 15)
     {
         $pages = [];   
@@ -103,5 +95,17 @@ class Helper {
         {
             \LogWriter::debug($e); 
         }
+    }
+
+    static public function implodeIndexed(array $array, array $indexes, $separator = '')
+    {
+        if(!is_string($separator))
+            throw new \InvalidArgument();
+
+        $values = array(); 
+        foreach ($indexes as $index)
+            $values[] = $array[$index];
+
+        return implode($separator, $values);
     }
 }

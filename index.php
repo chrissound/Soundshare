@@ -57,7 +57,7 @@ class LogWriter {
     }
 }
 
-
+date_default_timezone_set('Europe/London');
 
 // Slim
 $appConfigSettings = [
@@ -65,7 +65,7 @@ $appConfigSettings = [
     'templates.path' => './app/Templates',
 ];
 
-if (isset(\Bitlama\Common\Config::log) AND file_exists(\Bitlama\Common\Config::log))
+if (!empty(\Bitlama\Common\Config::log) AND file_exists(\Bitlama\Common\Config::log))
 {
     $logWriter = new \Slim\LogWriter(fopen(\Bitlama\Common\Config::log, 'a'));
     $appConfigSettings = array_merge($appConfigSettings, [
