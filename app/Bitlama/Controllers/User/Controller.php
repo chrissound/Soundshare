@@ -63,6 +63,10 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $rule = call_user_func($controller->app->filterRule, 'UsernameAvailable');
                 return $rule;
             });
+            $locator->set('captcha', function () use($controller) {
+                $rule = call_user_func($controller->app->filterRule, 'CaptchaCorrect');
+                return $rule;
+            });
 
             /* @TODO filter should be instantiated here - as it's confusing*/
             $validationData = [
@@ -78,6 +82,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
             $controller->app->filter->addSoftRule('password',        \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
             $controller->app->filter->addSoftRule('password_repeat', \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
             $controller->app->filter->addSoftRule('email',           \Aura\Filter\RuleCollection::IS,    'email');
+            $controller->app->filter->addSoftRule('captcha',         \Aura\Filter\RuleCollection::IS,    'captcha');
 
 
             if ($controller->app->filter->values($validationData)) {
@@ -107,10 +112,11 @@ class Controller extends \Bitlama\Controllers\BaseController {
             else
             {
                 $fieldLabels = [
-                    'alias' =>             "Alias/Username",
-                    'password' =>          "Password", 
-                    'password_repeat' =>   "Password Confirmation",
-                    'email' =>             "Email"  
+                    'alias' =>              "Alias/Username",
+                    'password' =>           "Password", 
+                    'password_repeat' =>    "Password Confirmation",
+                    'email' =>              "Email",
+                    'captcha' =>            "Captcha"
                 ];
 
                 $messages2 = array();
