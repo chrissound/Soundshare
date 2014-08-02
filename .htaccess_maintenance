@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} !^/maintenance\.html$
+RewriteRule .* /maintenance.html [R=503,L]
+ErrorDocument 503 /maintenance.html
