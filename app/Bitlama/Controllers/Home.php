@@ -63,23 +63,9 @@ class Home extends \Bitlama\Controllers\BaseController {
                 $page, \Bitlama\Common\Config::soundEntriesPerPage);
             $views['RenderedPagination'] =  \Bitlama\Common\Helper::render('pagination.html', ['pages'=>$pages], $this->app);
 
-
-            if ($userInstance->isLoggedIn())
-            {
-                $user = $this->app->datasource->load('user', $userInstance->getUserId());
-
-                $views['RenderedInfoBar'] = \Bitlama\Common\Helper::render('infobar.html', ['user'=> ['alias' => $user->alias]], $this->app);
-                $viewBase = [
-                    'content' => 
-                        $views['RenderedInfoBar'] . $views['renderedMessages'] . $views['RenderedHomePage'] . $views['RenderedSounds'] .$views['RenderedPagination'],
-                ];
-            }
-            else
-            {
-                $viewBase = [
-                    'content' => $views['renderedMessages'] . $views['RenderedHomePage'] . $views['RenderedSounds'] . $views['RenderedPagination'],
-                ];
-            }
+            $viewBase = [
+                'content' => $views['renderedMessages'] . $views['RenderedHomePage'] . $views['RenderedSounds'] . $views['RenderedPagination'],
+            ];
 
             $viewBase['title'] = 'Home';
             $viewBase = array_merge_recursive($viewBase, $this->GetCommonViewData($this->app));

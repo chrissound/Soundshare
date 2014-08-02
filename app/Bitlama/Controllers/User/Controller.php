@@ -107,6 +107,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                     \Bitlama\Common\Helper::render('register.mail', $controller->getViewDataForRegisterMail($userRecord, $activationRecord, false), $controller->app),
                     $controller->app);
 
+                $controller->app->flash('messages', [['title'=>'Registration successful', 'content' => 'An activation email has been sent, please activate your account.']]);
                 $controller->app->response->redirect(\Bitlama\Common\Helper::getUrl('/'));
             }
             else

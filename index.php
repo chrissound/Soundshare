@@ -1,4 +1,5 @@
 <?php
+$start = microtime(true);
 session_cache_limiter(false);
 session_start();
 require 'vendor/autoload.php';
@@ -125,7 +126,6 @@ $app->model = $app->container->protect(function($model) use($app) {
    return $modelInstance;
 });
 $app->filterRule = $app->container->protect(function($rule) use ($app) {
-    $bob = new Bitlama\Miscellaneous\UsernameAvailable();
     $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
     $filterRuleInstance = new $filterRuleInstance;
     $filterRuleInstance->setApp($app);
@@ -163,3 +163,4 @@ foreach($controllers as $controller)
 
 $app->run();
 
+LogWriter::debug("Time taken for request: ". round((microtime(true) - $start), 3) ."s");
