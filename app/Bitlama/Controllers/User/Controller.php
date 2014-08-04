@@ -409,7 +409,15 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 'sound_file_extension' =>   pathinfo($_FILES['sound_file']['name'], PATHINFO_EXTENSION),
             ];
 
-            $controller->app->filter->addSoftRule('title',                   \Aura\Filter\RuleCollection::IS,        'alnum');
+            // Refactor this somewhere into a nice method?
+            $locator = $controller->app->filter->getRuleLocator();
+            $locator->set('alphanumspace', function () use($controller) {
+                $rule = call_user_func($controller->app->filterRule, 'Alphanumspace');
+                return $rule;
+            });
+
+            $controller->app->filter->addHardRule('title',                   \Aura\Filter\RuleCollection::IS_NOT,    'blank');
+            $controller->app->filter->addSoftRule('title',                   \Aura\Filter\RuleCollection::IS,        'alphanumspace');
             $controller->app->filter->addSoftRule('description',             \Aura\Filter\RuleCollection::IS_NOT,    'blank');
             $controller->app->filter->addSoftRule('sound_file',              \Aura\Filter\RuleCollection::IS,        'upload');
             $controller->app->filter->addSoftRule('sound_file_extension',    \Aura\Filter\RuleCollection::IS,        'inValues',
