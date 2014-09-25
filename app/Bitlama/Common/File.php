@@ -21,9 +21,12 @@ class File {
     public function getMimeType($short)
     {
         $mimetypes = [
-            'wav' => ['audio/wave','audio/wav','audio/x-wav'],
-            'ogg' => ['audio/ogg', 'application/ogg'],
-            'mp3' => ['audio/mpeg', 'audio/x-mpeg-3', 'audio/mpeg3', 'audio/mp3'],
+            'wav' =>    ['audio/wave','audio/wav','audio/x-wav'],
+            'ogg' =>    ['audio/ogg', 'application/ogg'],
+            'mp3' =>    ['audio/mpeg', 'audio/x-mpeg-3', 'audio/mpeg3', 'audio/mp3'],
+            'jpeg' =>   ['image/jpeg'], 
+            'png' =>    ['image/png'], 
+            'bmp' =>    ['image/bmp'], 
         ];
         $mimetypekeys = array_keys($mimetypes);
 
@@ -51,6 +54,9 @@ class File {
             'wav' => ['audio/wave','audio/wav','audio/x-wav'],
             'ogg' => ['audio/ogg', 'application/ogg'],
             'mp3' => ['audio/mpeg', 'audio/x-mpeg-3', 'audio/mpeg3', 'audio/mp3'],
+            'jpeg' =>   ['image/jpeg'], 
+            'png' =>    ['image/png'], 
+            'bmp' =>    ['image/bmp'], 
         ];
 
         if (!in_array($type, array_keys($mimetypes)))

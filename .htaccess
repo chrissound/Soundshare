@@ -1,4 +1,5 @@
 RewriteEngine on
 RewriteRule ^public/sound(.*)$ /appdata/sounds$1 [L]
+RewriteRule ^public/images(.*)$ /appdata/images$1 [L]
 RewriteCond $1 !^(index\.php|appdata)
 RewriteRule ^(.*)$ /index.php/$1 [L]
