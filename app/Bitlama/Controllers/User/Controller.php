@@ -4,7 +4,6 @@ namespace Bitlama\Controllers\User;
 
 class Controller extends \Bitlama\Controllers\BaseController {
     protected $app;
-    protected $filter;
 
     public function setRoutes()
     {
@@ -324,6 +323,177 @@ class Controller extends \Bitlama\Controllers\BaseController {
             }
         })->conditions(['userId'=>'\d+']);
 
+        $this->app->get('/user/edit_profile', function () use ($controller) {
+            $requestUrl = '/user/edit_profile';
+            $this->authorize();
+
+            $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+
+            $views['renderedEditForm'] = \Bitlama\Common\Helper::render(
+                'form_file.html',
+                $controller->getEditProfileForm($requestUrl, null),
+                $controller->app);
+            $views['renderedMessages'] = \Bitlama\Common\Helper::render(
+                'notify.html', ['messages' => $messages], $controller->app);
+
+            $viewBase = [
+                'title' => 'Edit Profile',
+                'content' => implode("", [$views['renderedMessages'], $views['renderedEditForm']])
+            ]; 
+            $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
+            $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+            $controller->booom($viewRenderedBase);
+        });
+
+        $this->app->post('/user/edit_profile', function () use ($controller) {
+            $requestUrl = '/user/edit_profile';
+            $this->authorize();
+            $userInstance = new \Bitlama\Auth\User;
+
+            $requestData = [
+                'profile_picture_file' =>               isset($_FILES['profile_picture_file']) ? $_FILES['profile_picture_file'] : null,
+                'cover_picture_file' =>                 isset($_FILES['cover_picture_file']) ? $_FILES['cover_picture_file'] : null,
+            ];
+
+            if (true)
+            {
+                $locator = $controller->app->filter->getRuleLocator();
+                $locator->set('uploadExtension', function () use($controller) {
+                    $rule = call_user_func($controller->app->filterRule, 'UploadExtension');
+                    return $rule;
+                });
+                
+                $filterBoth = $controller->app->filterInstance;
+                $locator = $filterBoth->getRuleLocator();
+                $locator->set('uploadExtension', function () use($controller, $filterBoth) {
+                    $rule = call_user_func($controller->app->filterRuleInstance, 'UploadExtension', $filterBoth->getTranslator());
+                    return $rule;
+                });
+
+                $filterProfile = $controller->app->filterInstance;
+                $locator = $filterProfile->getRuleLocator();
+                $locator->set('uploadExtension', function () use($controller, $filterProfile) {
+                    $rule = call_user_func($controller->app->filterRuleInstance, 'UploadExtension', $filterProfile->getTranslator());
+                    return $rule;
+                });
+
+                $filterCover = $controller->app->filterInstance;
+                $locator = $filterCover->getRuleLocator();
+                $locator->set('uploadExtension', function () use($controller, $filterCover) {
+                    $rule = call_user_func($controller->app->filterRuleInstance, 'UploadExtension', $filterCover->getTranslator());
+                    return $rule;
+                });
+            }
+
+            $validationMessages = array();
+
+            // grrrr aura bureaucracy
+            $profile_picture_file = $requestData['profile_picture_file'];
+            $cover_picture_file = $requestData['cover_picture_file'];
+
+            if (!$controller->app->filter->value($profile_picture_file,   \Aura\Filter\RuleCollection::IS,    'upload')
+            &&  !$controller->app->filter->value($cover_picture_file,     \Aura\Filter\RuleCollection::IS,    'upload')
+            )
+            {
+                $filterBoth->addSoftRule('profile_picture_file',   \Aura\Filter\RuleCollection::IS,    'upload');
+                $filterBoth->addSoftRule('cover_picture_file',     \Aura\Filter\RuleCollection::IS,    'upload');
+                $filterBoth->values($requestData);
+
+                $validationMessages = array_merge($validationMessages, $filterBoth->getMessages());
+
+                \LogWriter::debug("Both validation failed :");
+                \LogWriter::debug($validationMessages);
+            }
+            else
+            {
+                if ($controller->app->filter->value($profile_picture_file,   \Aura\Filter\RuleCollection::IS,    'upload'))
+                {
+                    if ($controller->app->filter->value($profile_picture_file,   \Aura\Filter\RuleCollection::IS,    'uploadExtension', ['jpeg', 'jpg', 'png', 'bmp']))
+                    {
+                        \LogWriter::debug('profile picture success');
+
+                        $profileImageRecord = $this->app->datasource->findOne('image', 'user_id = ? AND image_type_id = ?', [$userInstance->getUserId(), 1]);
+
+                        if (!$profileImageRecord)
+                            $profileImageRecord = call_user_func($controller->app->model, 'image');
+
+                        $profileImageRecord->user_id =          $userInstance->getUserId();
+                        $profileImageRecord->image_type_id =   1;
+                        $profileImageRecord->createdTimestamp = time();
+
+                        $controller->app->datasource->store($profileImageRecord);
+                        $profileImageRecord->loadFile($_FILES['profile_picture_file']['tmp_name']);
+
+                        $controller->app->flash('messages', [['title'=>'Profile picture', 'content' => 'Profile picture successfully changed.']]);
+                    }
+                    else
+                    {
+                        \LogWriter::debug('profile picture fail');
+                        $filterProfile->addSoftRule('profile_picture_file',   \Aura\Filter\RuleCollection::IS,    'uploadExtension', ['jpeg', 'jpg', 'png', 'bmp']);
+                        $filterProfile->values($requestData);
+                        $validationMessages = array_merge($validationMessages, $filterProfile->getMessages());
+                    }
+                }
+
+                if ($controller->app->filter->value($cover_picture_file,     \Aura\Filter\RuleCollection::IS,    'upload'))
+                {
+                    if($controller->app->filter->value($cover_picture_file,     \Aura\Filter\RuleCollection::IS,    'uploadExtension', ['jpeg', 'jpg', 'png', 'bmp']))
+                    {
+                        \LogWriter::debug('cover picture success');
+
+                        $coverImageRecord = $this->app->datasource->findOne('image', 'user_id = ? AND image_type_id = ?', [$userInstance->getUserId(), 2]);
+
+                        if (!$coverImageRecord)
+                            $coverImageRecord = call_user_func($controller->app->model, 'image');
+
+                        $coverImageRecord->user_id =            $userInstance->getUserId();
+                        $coverImageRecord->image_type_id =   2;
+                        $coverImageRecord->createdTimestamp =   time();
+
+                        $controller->app->datasource->store($coverImageRecord);
+                        $coverImageRecord->loadFile($_FILES['cover_picture_file']['tmp_name']);
+
+                        $controller->app->flash('messages', [['title'=>'Cover picture', 'content' => 'Cover picture successfully changed.']]);
+                    }
+                    else
+                    {
+                        \LogWriter::debug('cover picture fail');
+                        $filterCover->addSoftRule('cover_picture_file',     \Aura\Filter\RuleCollection::IS,    'uploadExtension', ['jpeg', 'jpg', 'png', 'bmp']);
+                        $filterCover->values($requestData);
+                        $validationMessages = array_merge($validationMessages, $filterCover->getMessages());
+                    }
+                }
+            }
+
+            if (empty($validationMessages))
+            {
+                $controller->app->response->redirect('/user/'.$userInstance->getUserId());
+            }
+            else
+            {
+                $fieldLabels = [
+                    'profile_picture_file' =>           "Profile picture",
+                    'profile_picture_file_extension' => "Profile picture extension",
+                    'cover_picture_file' =>             "Cover picture",
+                    'cover_picture_file_extension' =>   "Cover picture extension"
+                ];
+
+                $flashMessages= array();
+                $messages = $validationMessages;
+                foreach ($messages as $field => $fieldMessages)
+                {
+                    $flashMessages[] = [
+                        'title' =>      $fieldLabels[$field], 
+                        'content' =>    implode(" ", $fieldMessages)
+                    ];
+                }
+
+                $controller->app->flash('messages', $flashMessages);
+                $controller->app->flash('fields', array_intersect_key($requestData, array_flip(['title','description'])));
+                $controller->app->response->redirect($requestUrl);
+            }
+            });
+
         $this->app->get('/user/sound/:soundId', function ($soundId) use($controller) {
             $soundRecord = $controller->app->datasource->findOne('sound', 'id=?', [$soundId]);
 
@@ -591,6 +761,25 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 ['name' => 'title',             'title' =>  'Title',        'type' =>   'textshort'],
                 ['name' => 'description',       'title' =>  'Description',  'type' =>   'textlong'],
                 ['name' => 'sound_file',        'title' =>  'Sound File',   'type' =>   'file'],
+            ]
+        ];
+
+        foreach ($fields['fields'] as &$data)
+        {
+            if (isset($fieldValues[$data['name']]))
+                $data['value'] = $fieldValues[ $data['name'] ];
+        }
+
+        return $fields;
+    }
+
+    protected function getEditProfileForm($url, $fieldValues)
+    {
+        $fields = [
+            'action' => $url,
+            'fields' => [
+                ['name' => 'profile_picture_file',   'title' =>  'Profile Picture',  'type' =>   'file'],
+                ['name' => 'cover_picture_file',     'title' =>  'Cover Picture',   'type' =>   'file'],
             ]
         ];
 

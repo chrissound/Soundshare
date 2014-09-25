@@ -25,7 +25,7 @@ class BaseController {
         echo $output;
     }
 
-    protected function GetCommonViewData($app)
+    protected function GetCommonViewData()
     {
         $navigation = [
             ['type'=>'item', 'title'=>  'Home',         'href'=>    '/'],
@@ -54,6 +54,7 @@ class BaseController {
             ['type'=>'collection', 'title' => 'User',
                 'items'=> [
                     ['type'=>'item', 'title'=>  'My Profile',       'href'=>    '/user/'.\Bitlama\Auth\User::getUserId()],
+                    ['type'=>'item', 'title'=>  'Edit Profile',     'href'=>    '/user/edit_profile'],
                     ['type'=>'item', 'title'=>  'Upload Sound',     'href'=>    '/user/upload_sound'],
                 ]
             ];

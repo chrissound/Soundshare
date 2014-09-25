@@ -108,4 +108,17 @@ class Helper {
 
         return implode($separator, $values);
     }
+
+    static public function renderPage($title, $contentCollections, $commonViewData)
+    {
+        $viewBase = [
+            'title' => $title,
+            'content' => implode("", $contentCollections)
+        ]; 
+        $viewBase = array_merge_recursive($viewBase, $commonViewData);
+        $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+
+        $controller->booom($viewRenderedBase);
+    }
+
 }

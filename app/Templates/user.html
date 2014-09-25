@@ -1,3 +1,22 @@
+<style>
+.circular-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 110px;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    background: url(http://link-to-your/image.jpg) no-repeat;
+    }
+
+.background-picture {
+    height: 260px;
+    max-width: 100%;
+}
+</style>
+<div style="float: left; overflow: hidden; position: relative; left: 0; top: 0;">
+    <img class="background-picture " style="position: relative; top: 0; left: 0;" alt="cover picture" src="{{ user.getCoverImageUrl }}"/>
+    <img class="circular-avatar" style="position: absolute; top: 30px; left: 70px;" alt="avatar" src="{{ user.getProfileImageUrl }}"/>
+</div>
 <h3>{{ user.alias }}</h3>
 <p>Member since: {{ user.getRegisteredDateTime|date("d F Y") }}</p>
 <p>Last seen: {{ user.getLoginDateTime|date("d F Y") }}</p>

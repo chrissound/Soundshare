@@ -33,6 +33,12 @@ class LogWriter {
 
     public static function debug($args)
     {
+        if (is_string($args))
+        {
+            call_user_func_array(array(self::$app->log, "debug"), (array)$args);
+            return;
+        }
+
         foreach($args as &$arg)
             $arg = !is_string($arg) ? var_export($arg, true): $arg;
 
@@ -139,6 +145,19 @@ $app->filterRule = $app->container->protect(function($rule) use ($app) {
     return $filterRuleInstance;
 });
 
+$app->filterRuleInstance = $app->container->protect(function($rule, $translator) use ($app) {
+    $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
+    $filterRuleInstance = new $filterRuleInstance;
+    $filterRuleInstance->setApp($app);
+
+    foreach($filterRuleInstance->getMessages() as $key => $message)
+    {
+        $translator->set($key, $message);
+    }
+
+    return $filterRuleInstance;
+});
+
 $captcha = new Captcha\Captcha();
 $captcha->setPublicKey(\Bitlama\Common\Config::recaptchaPublicKey);
 $captcha->setPrivateKey(\Bitlama\Common\Config::recaptchaPrivateKey);
@@ -147,6 +166,11 @@ $app->captcha = $captcha;
 
 // Aura Filter
 $app->filter = require "vendor/aura/filter/scripts/instance.php";
+
+$app->filterInstance = function(){
+    $value = require "vendor/aura/filter/scripts/instance.php";
+    return $value;
+};
 
 
 // Bitlama  
