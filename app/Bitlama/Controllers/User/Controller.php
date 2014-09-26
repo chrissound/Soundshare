@@ -329,6 +329,10 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
 
+            $views['renderedParagraph'] = \Bitlama\Common\Helper::render(
+                'paragraph.html',
+                ['paragraphRaw' => '*Recommended profile picture dimensions: 200px x 200px. <br />*Recommended cover picture dimensions: 1040px x 260px. <br />'],
+                $controller->app);
             $views['renderedEditForm'] = \Bitlama\Common\Helper::render(
                 'form_file.html',
                 $controller->getEditProfileForm($requestUrl, null),
@@ -338,7 +342,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $viewBase = [
                 'title' => 'Edit Profile',
-                'content' => implode("", [$views['renderedMessages'], $views['renderedEditForm']])
+                'content' => implode("", [$views['renderedParagraph'], $views['renderedMessages'], $views['renderedEditForm']])
             ]; 
             $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
             $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);

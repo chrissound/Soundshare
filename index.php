@@ -167,6 +167,15 @@ $app->captcha = $captcha;
 // Aura Filter
 $app->filter = require "vendor/aura/filter/scripts/instance.php";
 
+$di = new RedBean_DependencyInjector;
+RedBean_ModelHelper::setDependencyInjector( $di );
+
+$di->addDependency('app', $app);
+
+$queryLogger = RedBean_Plugin_QueryLogger::getInstanceAndAttach(
+            R::getDatabaseAdapter()
+                );
+
 $app->filterInstance = function(){
     $value = require "vendor/aura/filter/scripts/instance.php";
     return $value;

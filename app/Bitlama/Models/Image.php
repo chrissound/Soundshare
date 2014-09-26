@@ -78,6 +78,6 @@ class Image extends \Bitlama\Models\BaseModel {
     {
         $file = $this->getFile();
         $pathinfo = pathinfo($file->getFilePath()); 
-        return "/appdata/public/images/". $pathinfo['basename'];
+        return "/public/images/". $pathinfo['basename'];
     }
 }

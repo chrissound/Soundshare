@@ -1,5 +1,10 @@
 {% for sound in sounds %}
 <div>
+    {% if showAuthorReference %}
+        <div style="float: left; overflow: hidden; position: relative; left: 0; top: 0;">
+            <img class="circular-avatar-small" style="position: relative; top: 0px; left: 0px;" alt="avatar" src="{{ sound.user.getProfileImageUrl }}"/>
+        </div>
+    {% endif %}
     <p><span class="glyphicon glyphicon-music"></span> <a href='/user/sound/{{ sound.id }}'>{{ sound.title }}</a></p>
     {% if showAuthorReference %}
         <p><span class="glyphicon glyphicon-user"></span> <a href="/user/{{ sound.user.id}}">{{ sound.user.alias }}</a></p>
@@ -17,6 +22,7 @@
             <source src="/public/sound/sound_{{ sound.id }}.ogg" type="audio/ogg"></source>
         {% endif %}
     </audio>
+    <div style="clear: both;"></div>
 </div>
 <hr />
 {% endfor %}
