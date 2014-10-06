@@ -3,6 +3,12 @@
     <head>
         <meta charset="utf-8"/>
         <title>Soundshare - {{ title }}</title>
+        {% if meta.description %}
+            <meta name="description" content="{{ meta.description }}">
+        {% else %}
+            <meta name="description" content="SoundShare - your free music sharing, music production online community">
+        {% endif %}
+        <meta name="keywords" content="soundshare, music production, sound sharing, music production community, online music community, free audio tracks, free audio loops">
 
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">

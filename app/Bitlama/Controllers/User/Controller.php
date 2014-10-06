@@ -148,16 +148,15 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $controller->app->datasource->store($activationRecord);
 
                 $messages[] = ['title'=>'Account activated', 'content'=>'Account activated.'];
-                $controller->app->flash('messages', $messages);
-                $controller->app->response->redirect('/');
             }
             else
             {
                 \LogWriter::info(["Invalid activation request", $userId, $activationCode, $activationRecord->code]);
                 $messages[] = ['title'=>'Invalid activation', 'content'=>'Invalid activation request.'];
-                $controller->app->flash('messages', $messages);
-                $controller->app->response->redirect('/');
             }
+
+            $controller->app->flash('messages', $messages);
+            $controller->app->response->redirect('/');
 
 
         })->name('routeUserActivate');
@@ -308,7 +307,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
 
                 $viewBase = [
-                    'title' => 'Home',
+                    'title' => $userRecord->alias,
                     'content' => implode("", [$views['renderedUser']])
                 ]; 
                 $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
@@ -522,7 +521,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                     $views['renderedCommentForm'] =   '';
 
                 $viewBase = [
-                    'title' => 'User Login',
+                    'title' => $soundRecord->title . " - " . $soundRecord->user->alias,
                     'content' => implode("", [$views['renderedMessages'], $views['renderedHeader'], $views['renderedSound'], $views['renderedComments'], $views['renderedCommentForm']])
                 ];
                 $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
@@ -558,7 +557,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $controller->app);
 
             $viewBase = [
-                'title' => 'User Login',
+                'title' => 'Upload Sound',
                 'content' => \Bitlama\Common\Helper::implodeIndexed($views, array('renderedHeader','renderedMessages','renderedUploadForm'))
             ];
             $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
