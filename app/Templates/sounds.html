@@ -13,6 +13,7 @@
     {% if (sound.processing == true) and (showSoundProcessing) %}
         <p><span class="glyphicon glyphicon-cog"></span> Processing</p>
     {% endif %}
+    {% include "download_links.html" %}
 
     <audio controls preload="none">
         {% if sound.isPresentMp3 %}

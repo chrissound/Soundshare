@@ -1,6 +1,8 @@
 <p><span class="glyphicon glyphicon-music"></span> {{ sound.title }}</p>
     <p><span class="glyphicon glyphicon-user"></span> <a href="/user/{{ sound.user.id}}">{{ sound.user.alias }}</a></p>
     <p><span class="glyphicon glyphicon-calendar"></span> Upload date: {{ sound.getCreatedDateTime|date("d F Y") }}</p>
+    <p><span class="glyphicon glyphicon-calendar"></span> Upload date: {{ sound.getCreatedDateTime|date("d F Y") }}</p>
+    {% include "download_links.html" %}
 <audio controls preload="none">
         {% if sound.isPresentMp3 %}
             <source src="/public/sound/sound_{{ sound.id }}.mp3" type="audio/mpeg"></source>

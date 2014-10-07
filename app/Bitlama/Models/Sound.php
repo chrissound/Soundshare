@@ -9,6 +9,7 @@ class Sound extends \Bitlama\Models\BaseModel {
 
     protected $presentMp3 = false;
     protected $presentOgg = false;
+    protected $presentWav = false;
 
     public function __construct() {
         parent::__construct();
@@ -157,6 +158,8 @@ class Sound extends \Bitlama\Models\BaseModel {
                         $this->presentMp3 =  true;
                     elseif ($mimetype == 'ogg')
                         $this->presentOgg =  true;
+                    elseif ($mimetype == 'wav')
+                        $this->presentWav =  true;
 
                     $validFiles[] = $file;
                     break;
@@ -189,6 +192,11 @@ class Sound extends \Bitlama\Models\BaseModel {
     public function isPresentOgg()
     {
         return $this->presentOgg;
+    }
+
+    public function isPresentWav()
+    {
+        return $this->presentWav;
     }
 
     /*

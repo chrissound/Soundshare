@@ -1,0 +1,12 @@
+{% set downloadLinks %}
+    {% if sound.isPresentMp3 %}
+        <a href="/public/sound/sound_{{ sound.id }}.mp3">Download MP3</a> |
+    {% endif %}
+    {% if sound.isPresentOgg %}
+        <a href="/public/sound/sound_{{ sound.id }}.ogg">Download OGG</a> |
+    {% endif %}
+    {% if sound.isPresentWav %}
+        <a href="/public/sound/sound_{{ sound.id }}.wav">Download WAV</a> |
+    {% endif %}
+{% endset %}
+<p><span class="glyphicon glyphicon-download"></span>{{ downloadLinks|trim|slice(0,-1)|raw }}</p>
