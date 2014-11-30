@@ -1,20 +1,22 @@
 {% for field in fields %}
-    <div class="form-group">
-        <label class="col-sm-2 control-label">{{ field.title }}</label>
-
-        <div class="col-sm-4">
-            {% if field.type == 'textshort' %}
-                <input class="form-control"     type='text'      name='{{ field.name }}' value='{{ field.value }}' /> 
-            {% elseif field.type == 'textsecure' %}
-                <input class="form-control"     type='password'  name='{{ field.name }}' value='{{ field.value }}' /> 
-            {% elseif field.type == 'file' %}
-                <input class="form-control"     type='file'      name='{{ field.name }}' /> 
-            {% elseif field.type == 'textlong' %}
-                <textarea class="form-control"  name='{{ field.name }}'>{{ field.value }}</textarea>
-            {% elseif field.type == 'hidden' %}
-                <input class="form-control"     type='hidden'    name='{{ field.name }}' value='{{ field.value }}' />
+    {% if field.type in ['textshort', 'textlong', 'textsecure', 'textfile'] %}
+        <div class="form-group">
+            {% if field.title is defined %}
+                <label class="col-sm-2 control-label">{{ field.title }}</label>
             {% endif %}
+
+            <div class="col-sm-4">
+                {% if field.type == 'textshort' %}
+                    <input class="form-control"     type='text'      name='{{ field.name }}' value='{{ field.value }}' /> 
+                {% elseif field.type == 'textsecure' %}
+                    <input class="form-control"     type='password'  name='{{ field.name }}' value='{{ field.value }}' /> 
+                {% elseif field.type == 'file' %}
+                    <input class="form-control"     type='file'      name='{{ field.name }}' /> 
+                {% endif %}
+            </div>
+            <br />
         </div>
-        <br />
-    </div>
+    {% elseif field.type == 'hidden' %}
+        <input class="form-control"     type='hidden'    name='{{ field.name }}' value='{{ field.value }}' />
+    {% endif %} 
 {% endfor %}

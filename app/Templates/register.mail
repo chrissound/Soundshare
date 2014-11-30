@@ -1,4 +1,4 @@
-Welcome aboard {{ user.alias}}!
+Welcome aboard {{ user }}!
 
 {% if email.html %} 
     Please verify your account: <a href="{{ activation.url }}">activate</a>

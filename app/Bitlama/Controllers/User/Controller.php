@@ -186,10 +186,12 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $views['renderedMessages'] = \Bitlama\Common\Helper::render(
                 'notify.html', ['messages' => $messages], $controller->app);
+            $views['renderedPasswordResetLink'] = \Bitlama\Common\Helper::render('anchor.html', ['linkUrl' => '/user/passwordReset', 'linkText' => 'Reset password'], $controller->app);
+
 
             $viewBase = [
                 'title' => 'User Login',
-                'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedLoginForm']
+                'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedLoginForm'] . $views['renderedPasswordResetLink']
             ];
 
             $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
@@ -240,6 +242,229 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $controller->app->flash('messages', $messages);
                 $controller->app->flash('fields', ['alias'=>$requestData['alias']]);
                 $controller->app->response->redirect('/user/login');
+            }
+
+        });
+
+        $this->app->get('/user/passwordReset', function() use ($controller) {
+
+            $userInstance = new \Bitlama\Auth\User;
+            if($userInstance->isLoggedIn())
+            {
+                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
+                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
+                $this->app->stop();
+                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+            }
+
+            $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+
+            $views = [];
+            $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Password Reset']],$controller->app);
+            $views['renderedResetForm'] = \Bitlama\Common\Helper::render('form.html', $controller->getPasswordResetForm("/user/passwordReset"), $controller->app);
+            $views['renderedMessages'] = \Bitlama\Common\Helper::render(
+                'notify.html', ['messages' => $messages], $controller->app);
+
+            $viewBase = [
+                'title' => 'Password Reset',
+                'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedResetForm']
+            ];
+
+            $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
+            $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+
+            $this->booom($viewRenderedBase);
+
+        });
+
+        $this->app->post('/user/passwordReset', function () use ($controller) {
+
+            $userInstance = new \Bitlama\Auth\User;
+            if($userInstance->isLoggedIn())
+            {
+                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
+                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/user/passwordReset", null));
+                $this->app->stop();
+                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+            }
+
+
+            $requestData = [
+                'email' =>      $controller->app->request->post('email'),
+            ];
+
+            $userRecord = $controller->app->datasource->findOne('user', 'email = ?',
+                [
+                    $requestData['email'],
+                ]
+            );
+
+            if ($userRecord) {
+
+                //$userRecord->loginTimestamp =  time();
+                //$controller->app->datasource->store($userRecord);
+                // generate random password for user
+
+
+                $resetPasswordRecord = call_user_func($this->app->model, 'passwordreset');
+                $resetPasswordRecord->userId = $userRecord->id;
+                $resetPasswordRecord->confirmKey = \Bitlama\Common\Helper::generateRandomString(32); 
+                $this->app->datasource->store($resetPasswordRecord);
+                
+                \Bitlama\Common\Helper::sendEmail(
+                    $userRecord->alias,
+                    $userRecord->email,
+                    "Soundshare - Password reset",
+                    nl2br(\Bitlama\Common\Helper::render('password_reset.mail', $controller->getViewDataForPasswordResetMail($userRecord, $resetPasswordRecord, true), $controller->app)),
+                    \Bitlama\Common\Helper::render('password_reset.mail', $controller->getViewDataForPasswordResetMail($userRecord, $resetPasswordRecord, false), $controller->app),
+                    $controller->app);
+
+                // Blabla send reset email
+
+                // We should probably a generate a generic page for these situtations 
+                //
+                $views = [];
+                $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Password Reset']],$controller->app);
+                $views['renderedParagraph'] = \Bitlama\Common\Helper::render('paragraph.html', ['paragraph' => "An email has been sent"], $controller->app);
+                $viewBase = [
+                    'title' => 'Password Reset',
+                    'content' => $views['renderedHeader'] . $views['renderedParagraph']
+                ];
+                $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
+                $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+                $this->booom($viewRenderedBase);
+
+            }
+            else
+            {
+                $messages = [];
+                $messages[] = ['title'=>'No user found', 'content'=>'No user found with email provided'];
+                $controller->app->flash('messages', $messages);
+                $controller->app->response->redirect('/user/passwordReset');
+            }
+
+        });
+
+        $this->app->get('/user/passwordReset/confirm/:confirmKey', function ($confirmKey) use ($controller) {
+
+            $userInstance = new \Bitlama\Auth\User;
+            if($userInstance->isLoggedIn())
+            {
+                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
+                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
+                $this->app->stop();
+                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+            }
+
+            $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ?', [$confirmKey]);
+
+            if ($resetPasswordRecord) {
+                if (true)
+                {
+                    $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+
+                    $views = [];
+                    $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Change password']],$controller->app);
+                    $views['renderedMessages'] = \Bitlama\Common\Helper::render('notify.html', ['messages' => $messages], $controller->app);
+                    $views['renderedChangeForm'] = \Bitlama\Common\Helper::render('form.html', $controller->getPasswordChangeForm("/user/changePassword", $confirmKey), $controller->app);
+
+                    $viewBase = [
+                        'title' => 'Password Reset',
+                        'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedChangeForm']
+                    ];
+
+                    $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
+                    $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+
+                    $this->booom($viewRenderedBase);
+                }
+
+            }
+            else
+            {
+                $messages = [];
+                $messages[] = ['title'=>'Invalid password request', 'content'=>'Invalid password reset. Please try requesting a new reset.'];
+                $controller->app->flash('messages', $messages);
+                $controller->app->response->redirect('/user/passwordReset');
+            }
+
+        })->name('confirmResetPassword');
+
+        $this->app->post('/user/changePassword', function () use ($controller) {
+
+
+            $userInstance = new \Bitlama\Auth\User;
+            if($userInstance->isLoggedIn())
+            {
+                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
+                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
+                $this->app->stop();
+                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+            }
+
+            $validationData = [ 
+                'confirmKey' =>         $controller->app->request->post('confirm_key'),
+                'password' =>           $controller->app->request->post('password'),
+                'password_repeat' =>    $controller->app->request->post('password_repeat'),
+            ];
+
+            $controller->app->filter->addSoftRule('password',        \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
+            $controller->app->filter->addSoftRule('password_repeat', \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
+
+            $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ?', [$validationData['confirmKey']]);
+
+
+            if ($resetPasswordRecord)
+            {
+                if ($controller->app->filter->values($validationData))
+                {
+                    $userRecord = $resetPasswordRecord->user; 
+                    $userRecord->password = md5($validationData['password'] . "6krfcoEsY2DUJYnxZc36HDKnyRYHE");
+                    $controller->app->datasource->store($userRecord);
+                    $controller->app->datasource->trash($resetPasswordRecord);
+
+                    $views = [];
+                    $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Change password']],$controller->app);
+                    $views['renderedParagraph'] = \Bitlama\Common\Helper::render('paragraph.html', ['paragraph' => "Your password has been reset. You can now proceed to login. "], $controller->app);
+
+                    $viewBase = [
+                        'title' => 'Password Reset',
+                        'content' => $views['renderedHeader'] . $views['renderedParagraph']
+                    ];
+
+                    $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
+                    $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+
+                    $this->booom($viewRenderedBase);
+                }
+                else
+                {
+                    $fieldLabels = [
+                        'password' =>           "Password", 
+                        'password_repeat' =>    "Password confirmation",
+                    ];
+
+                    $messages2 = array();
+                    $messages = $controller->app->filter->getMessages();
+                    foreach ($messages as $field => $fieldMessages)
+                    {
+                        $messages2[] = [
+                            'title' =>      $fieldLabels[$field], 
+                            'content' =>    implode(" ", $fieldMessages)
+                        ];
+                    }
+                    $controller->app->flash('messages', $messages2);
+                    $controller->app->flash('fields', array_intersect_key($validationData, array_flip(['confirmKey'])));
+                    $controller->app->response->redirect(\Bitlama\Common\Slim::urlFor('confirmResetPassword', ['confirmKey' => $validationData['confirmKey']]));
+                }
+
+            }
+            else
+            {
+                $messages = [];
+                $messages[] = ['title'=>'Invalid password request', 'content'=>'Invalid password reset. Please try requesting a new reset.'];
+                $controller->app->flash('messages', $messages);
+                $controller->app->response->redirect('/user/passwordReset');
             }
 
         });
@@ -697,6 +922,19 @@ class Controller extends \Bitlama\Controllers\BaseController {
         ];
     }
 
+    protected function getViewDataForPasswordResetMail($user, $confirmReset, $html)
+    {
+        return [
+            'user' => $user->alias,
+            'confirmReset' => [
+                'url' => \Bitlama\Common\Slim::urlFor('confirmResetPassword', ['confirmKey' => $confirmReset->confirmKey])
+            ],
+            'email' => [
+                'html' => $html,
+            ]
+        ];
+    }
+
     protected function getCommentForm($url, $fieldValues)
     {
         $fields = [
@@ -752,6 +990,32 @@ class Controller extends \Bitlama\Controllers\BaseController {
             if (isset($fieldValues[$data['name']]))
                 $data['value'] = $fieldValues[ $data['name'] ];
         }
+
+        return $fields;
+    }
+
+    protected function getPasswordResetForm($url)
+    {
+        $fields = [
+            'action' => $url,
+            'fields' => [
+                ['name' => 'email',             'title' =>  'Email', 'type' =>   'textshort'],
+            ]
+        ];
+
+        return $fields;
+    }
+
+    protected function getPasswordChangeForm($url, $confirmKey)
+    {
+        $fields = [
+            'action' => $url,
+            'fields' => [
+                ['name' => 'password',          'title' =>  'Password',         'type' =>   'textsecure'],
+                ['name' => 'password_repeat',   'title' =>  'Confirm password', 'type' =>   'textsecure'],
+                ['name' => 'confirm_key',       'value' => $confirmKey,         'type' =>   'hidden'],
+            ]
+        ];
 
         return $fields;
     }
