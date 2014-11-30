@@ -309,6 +309,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 $resetPasswordRecord = call_user_func($this->app->model, 'passwordreset');
                 $resetPasswordRecord->userId = $userRecord->id;
                 $resetPasswordRecord->confirmKey = \Bitlama\Common\Helper::generateRandomString(32); 
+                $resetPasswordRecord->created = time();
                 $this->app->datasource->store($resetPasswordRecord);
                 
                 \Bitlama\Common\Helper::sendEmail(
@@ -356,7 +357,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
             }
 
-            $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ?', [$confirmKey]);
+            $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ? AND created > ?', [$confirmKey, time() - (15 * 60)]);
 
             if ($resetPasswordRecord) {
                 if (true)
@@ -411,7 +412,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
             $controller->app->filter->addSoftRule('password',        \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
             $controller->app->filter->addSoftRule('password_repeat', \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
 
-            $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ?', [$validationData['confirmKey']]);
+            $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ? AND created > ?', [$validationData['confirmKey'], time() - (15 * 60)]);
 
 
             if ($resetPasswordRecord)
