@@ -4,6 +4,23 @@ namespace Bitlama\Common;
 
 class Helper {
 
+    static public function redirect($url, $app)
+    {
+        $app->redirect(\Bitlama\Common\Helper::getUrl($url, null));
+        $app->stop();
+        die();
+    }
+
+    static public function getPreviousFormValues()
+    {
+        return isset($_SESSION['slim.flash']['fields']) ? $_SESSION['slim.flash']['fields'] : array();
+    }
+
+    static public function getMessages()
+    {
+        return isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+    }
+
     static public function getAllRoutes($app)
     {
     }

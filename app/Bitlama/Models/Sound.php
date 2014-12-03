@@ -50,6 +50,7 @@ class Sound extends \Bitlama\Models\BaseModel {
 
         $destFilePath =  \Bitlama\Common\Bootstrap::$appPath."appdata/sounds/sound_{$this->bean->id}.{$extension}";
 
+        $this->app->log->debug("Attempting copy from: '{$filePath}' to '{$destFilePath}.'");
         if (!copy($filePath, $destFilePath))
             throw Exception("Unable to move file $filePath to $destFilePath.");
 

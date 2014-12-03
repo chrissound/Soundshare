@@ -12,27 +12,22 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the registration page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
+
+            $previousFormValues = \Bitlama\Common\Helper::getPreviousFormValues();;
+            $validationMessages = \Bitlama\Common\Helper::getMessages();
 
             $registerUrl = "/user/register";
 
-            $previousFormValues = isset($_SESSION['slim.flash']['fields']) ? $_SESSION['slim.flash']['fields'] : array();
-            $validationMessages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
             $captcha = $controller->app->captcha;
             $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Register']],$controller->app);
+            $views['renderedMessages'] = \Bitlama\Common\Helper::render('notify.html', ['messages' => $validationMessages], $controller->app);
             $views['renderedRegistrationForm'] = \Bitlama\Common\Helper::render(
                 'register_form.html',
                 array_merge(
                     $controller->getRegisterForm($registerUrl, $previousFormValues),
                     ['captcha' => $captcha->html()]),
                 $controller->app);
-            $views['renderedMessages'] = \Bitlama\Common\Helper::render(
-                'notify.html', ['messages' => $validationMessages], $controller->app);
 
             $viewBase = [
                 'title' => 'User Registration',
@@ -49,23 +44,8 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the registration page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
-            // Refactor this somewhere into a nice method?
-            $locator = $controller->app->filter->getRuleLocator();
-            $locator->set('usernameAvaliable', function () use($controller) {
-                $rule = call_user_func($controller->app->filterRule, 'UsernameAvailable');
-                return $rule;
-            });
-            $locator->set('captcha', function () use($controller) {
-                $rule = call_user_func($controller->app->filterRule, 'CaptchaCorrect');
-                return $rule;
-            });
 
             /* @TODO filter should be instantiated here - as it's confusing*/
             $validationData = [
@@ -137,7 +117,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
         $this->app->get('/user/activate/:userId/:activationCode', function ($userId, $activationCode) use ($controller) {
 
             $userRecord = $controller->app->datasource->findOne('user', 'id = ?', [$userId]);
-            $activationRecord = reset($userRecord->ownActivation); // why doesn't $userRecord->activation work?!??!?! 
+            $activationRecord = reset($userRecord->ownActivation);
 
             if ($userRecord
                 && $activationRecord
@@ -169,16 +149,10 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
-            $previousFormValues = isset($_SESSION['slim.flash']['fields']) ? $_SESSION['slim.flash']['fields'] : array();
-            $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
-
+            $previousFormValues = \Bitlama\Common\Helper::getPreviousFormValues();
+            $messages = \Bitlama\Common\Helper::getMessages(); 
 
             $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Login']],$controller->app);
 
@@ -204,12 +178,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
             $loginUrl = "/user/login";
 
@@ -250,14 +219,9 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
-            $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+            $messages = \Bitlama\Common\Helper::getMessages(); 
 
             $views = [];
             $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Password Reset']],$controller->app);
@@ -281,30 +245,13 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/user/passwordReset", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
+            $requestData = ['email' =>$controller->app->request->post('email')];
 
-            $requestData = [
-                'email' =>      $controller->app->request->post('email'),
-            ];
-
-            $userRecord = $controller->app->datasource->findOne('user', 'email = ?',
-                [
-                    $requestData['email'],
-                ]
-            );
+            $userRecord = $controller->app->datasource->findOne('user', 'email = ?', [$requestData['email']]);
 
             if ($userRecord) {
-
-                //$userRecord->loginTimestamp =  time();
-                //$controller->app->datasource->store($userRecord);
-                // generate random password for user
-
 
                 $resetPasswordRecord = call_user_func($this->app->model, 'passwordreset');
                 $resetPasswordRecord->userId = $userRecord->id;
@@ -350,36 +297,27 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
             $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ? AND created > ?', [$confirmKey, time() - (15 * 60)]);
 
             if ($resetPasswordRecord) {
-                if (true)
-                {
-                    $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
+                $messages = isset($_SESSION['slim.flash']['messages']) ? $_SESSION['slim.flash']['messages'] : array();
 
-                    $views = [];
-                    $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Change password']],$controller->app);
-                    $views['renderedMessages'] = \Bitlama\Common\Helper::render('notify.html', ['messages' => $messages], $controller->app);
-                    $views['renderedChangeForm'] = \Bitlama\Common\Helper::render('form.html', $controller->getPasswordChangeForm("/user/changePassword", $confirmKey), $controller->app);
+                $views = [];
+                $views['renderedHeader'] = \Bitlama\Common\Helper::render('page_header.html', ['page'=>['header'=>'Change password']],$controller->app);
+                $views['renderedMessages'] = \Bitlama\Common\Helper::render('notify.html', ['messages' => $messages], $controller->app);
+                $views['renderedChangeForm'] = \Bitlama\Common\Helper::render('form.html', $controller->getPasswordChangeForm("/user/changePassword", $confirmKey), $controller->app);
 
-                    $viewBase = [
-                        'title' => 'Password Reset',
-                        'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedChangeForm']
-                    ];
+                $viewBase = [
+                    'title' => 'Password Reset',
+                    'content' => $views['renderedHeader'] . $views['renderedMessages'] . $views['renderedChangeForm']
+                ];
 
-                    $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
-                    $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
+                $viewBase = array_merge_recursive($viewBase, $controller->GetCommonViewData($controller->app));
+                $viewRenderedBase = \Bitlama\Common\Helper::render('base.html', $viewBase, $controller->app);
 
-                    $this->booom($viewRenderedBase);
-                }
-
+                $this->booom($viewRenderedBase);
             }
             else
             {
@@ -393,15 +331,9 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
         $this->app->post('/user/changePassword', function () use ($controller) {
 
-
             $userInstance = new \Bitlama\Auth\User;
             if($userInstance->isLoggedIn())
-            {
-                $this->app->log->warning("User requsted the login page but... He is already logged in? Wtf?");
-                $this->app->redirect(\Bitlama\Common\Helper::getUrl("/", null));
-                $this->app->stop();
-                die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
-            }
+                \Bitlama\Common\Helper::redirect("/", $controller->app);
 
             $validationData = [ 
                 'confirmKey' =>         $controller->app->request->post('confirm_key'),
@@ -413,7 +345,6 @@ class Controller extends \Bitlama\Controllers\BaseController {
             $controller->app->filter->addSoftRule('password_repeat', \Aura\Filter\RuleCollection::IS,    'strlenMin',    8);
 
             $resetPasswordRecord = $controller->app->datasource->findOne('passwordreset', 'confirm_key = ? AND created > ?', [$validationData['confirmKey'], time() - (15 * 60)]);
-
 
             if ($resetPasswordRecord)
             {
@@ -481,12 +412,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             if($userRecord = $controller->app->datasource->findOne('user', 'id = ?', [$userId]))
             {
-                if (\Bitlama\Auth\User::isLoggedIn() && \Bitlama\Auth\User::getUserId() == $userId)
-                {
-                    $userIsOwner = true;
-                }
-                else
-                    $userIsOwner = false;
+                $userIsOwner = (\Bitlama\Auth\User::isLoggedIn() && \Bitlama\Auth\User::getUserId() == $userId);
 
                 $sounds = (array)$userRecord->ownSound;
                 $comments = (array)$userRecord->ownComment;
@@ -543,9 +469,7 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             }
             else
-            {
-                // User does not exist error page?
-            }
+               $controller->app->notFound();
         })->conditions(['userId'=>'\d+']);
 
         $this->app->get('/user/edit_profile', function () use ($controller) {
@@ -728,7 +652,6 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
             if ($soundRecord)
             {
-                $soundRecord->setApp($controller->app);
                 $soundRecord->initialize();
                 $soundRecord->user;
                 $commentRecords = $soundRecord->ownComment;
@@ -793,9 +716,6 @@ class Controller extends \Bitlama\Controllers\BaseController {
 
         $this->app->post('/user/upload_sound', function () use ($controller) {
 
-            ini_set('post_max_size', '64M');
-            ini_set('upload_max_filesize', '64M');
-
             $requestUrl = "/user/upload_sound";
             $this->authorize($requestUrl);
 
@@ -807,13 +727,6 @@ class Controller extends \Bitlama\Controllers\BaseController {
                 'sound_file' =>             isset($_FILES['sound_file']) ? $_FILES['sound_file'] : null,
                 'sound_file_extension' =>   pathinfo($_FILES['sound_file']['name'], PATHINFO_EXTENSION),
             ];
-
-            // Refactor this somewhere into a nice method?
-            $locator = $controller->app->filter->getRuleLocator();
-            $locator->set('alphanumspace', function () use($controller) {
-                $rule = call_user_func($controller->app->filterRule, 'Alphanumspace');
-                return $rule;
-            });
 
             $controller->app->filter->addHardRule('title',                   \Aura\Filter\RuleCollection::IS_NOT,    'blank');
             $controller->app->filter->addSoftRule('title',                   \Aura\Filter\RuleCollection::IS,        'alphanumspace');

@@ -109,54 +109,88 @@ $app->view->parserOptions = [
 
 
 // RedBean
-class MyModelFormatter implements RedBean_IModelFormatter {
-    public function formatModel($model) {
-        return '\\'.'Bitlama'.'\\'.'Models'.'\\'.ucfirst($model);
+if (true)
+{
+    class MyModelFormatter implements RedBean_IModelFormatter {
+        public function formatModel($model) {
+            return '\\'.'Bitlama'.'\\'.'Models'.'\\'.ucfirst($model);
+        }
     }
+    use RedBean_Facade as R;
+    R::setup(
+        Bitlama\Common\Config::dbEngine.':host='.Bitlama\Common\Config::dbHost.';dbname='.Bitlama\Common\Config::dbName,
+        Bitlama\Common\Config::dbUser,
+        Bitlama\Common\Config::dbPassword);
+    $formatter = new MyModelFormatter;
+    RedBean_ModelHelper::setModelFormatter($formatter);
+
+    $app->container->singleton('datasource', function(){
+        $fml = new R();
+        return $fml;
+    });
+    $app->model = $app->container->protect(function($model) use($app) {
+        
+       $modelInstance =  $app->datasource->dispense($model);
+       $modelInstance->setApp($app);
+       return $modelInstance;
+    });
+
+    $di = new RedBean_DependencyInjector;
+    RedBean_ModelHelper::setDependencyInjector( $di );
+
+    $di->addDependency('app', $app);
 }
-use RedBean_Facade as R;
-R::setup(
-    Bitlama\Common\Config::dbEngine.':host='.Bitlama\Common\Config::dbHost.';dbname='.Bitlama\Common\Config::dbName,
-    Bitlama\Common\Config::dbUser,
-    Bitlama\Common\Config::dbPassword);
-$formatter = new MyModelFormatter;
-RedBean_ModelHelper::setModelFormatter($formatter);
-$app->container->singleton('datasource', function(){
-    $fml = new R();
-    return $fml;
-});
-$app->model = $app->container->protect(function($model) use($app) {
-    
-   $modelInstance =  $app->datasource->dispense($model);
-   $modelInstance->setApp($app);
-   return $modelInstance;
-});
-$app->filterRule = $app->container->protect(function($rule) use ($app) {
-    $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
-    $filterRuleInstance = new $filterRuleInstance;
-    $filterRuleInstance->setApp($app);
 
-    $translator = $app->filter->getTranslator();
-    foreach($filterRuleInstance->getMessages() as $key => $message)
-    {
-        $translator->set($key, $message);
-    }
+// Aura Filter
+if (true)
+{
+    $app->filterInstance = function(){
+        $value = require "vendor/aura/filter/scripts/instance.php";
+        return $value;
+    };
 
-    return $filterRuleInstance;
-});
+    $app->filter = require "vendor/aura/filter/scripts/instance.php";
+    $app->filterRule = $app->container->protect(function($rule) use ($app) {
+        $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
+        $filterRuleInstance = new $filterRuleInstance;
+        $filterRuleInstance->setApp($app);
 
-$app->filterRuleInstance = $app->container->protect(function($rule, $translator) use ($app) {
-    $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
-    $filterRuleInstance = new $filterRuleInstance;
-    $filterRuleInstance->setApp($app);
+        $translator = $app->filter->getTranslator();
+        foreach($filterRuleInstance->getMessages() as $key => $message)
+        {
+            $translator->set($key, $message);
+        }
 
-    foreach($filterRuleInstance->getMessages() as $key => $message)
-    {
-        $translator->set($key, $message);
-    }
+        return $filterRuleInstance;
+    });
 
-    return $filterRuleInstance;
-});
+    $app->filterRuleInstance = $app->container->protect(function($rule, $translator) use ($app) {
+        $filterRuleInstance = "\\Bitlama\\Miscellaneous\\".$rule;
+        $filterRuleInstance = new $filterRuleInstance;
+        $filterRuleInstance->setApp($app);
+
+        foreach($filterRuleInstance->getMessages() as $key => $message)
+        {
+            $translator->set($key, $message);
+        }
+
+        return $filterRuleInstance;
+    });
+
+    $locator = $app->filter->getRuleLocator();
+    $locator->set('usernameAvaliable', function () use($app) {
+        $rule = call_user_func($app->filterRule, 'UsernameAvailable');
+        return $rule;
+    });
+    $locator->set('captcha', function () use($app) {
+        $rule = call_user_func($app->filterRule, 'CaptchaCorrect');
+        return $rule;
+    });
+    $locator->set('alphanumspace', function () use($app) {
+        $rule = call_user_func($app->filterRule, 'Alphanumspace');
+        return $rule;
+    });
+}
 
 $captcha = new Captcha\Captcha();
 $captcha->setPublicKey(\Bitlama\Common\Config::recaptchaPublicKey);
@@ -164,22 +198,7 @@ $captcha->setPrivateKey(\Bitlama\Common\Config::recaptchaPrivateKey);
 $captcha->setTheme('clean');
 $app->captcha = $captcha;
 
-// Aura Filter
-$app->filter = require "vendor/aura/filter/scripts/instance.php";
 
-$di = new RedBean_DependencyInjector;
-RedBean_ModelHelper::setDependencyInjector( $di );
-
-$di->addDependency('app', $app);
-
-$queryLogger = RedBean_Plugin_QueryLogger::getInstanceAndAttach(
-            R::getDatabaseAdapter()
-                );
-
-$app->filterInstance = function(){
-    $value = require "vendor/aura/filter/scripts/instance.php";
-    return $value;
-};
 
 
 // Bitlama  

@@ -31,7 +31,7 @@ class BackgroundProcessing extends \Bitlama\Controllers\BaseController {
                 }
             }
             else 
-                echo "Ohhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh shit! PREPARE THE LAZERS!";
+                echo "Hmmm! PREPARE THE LAZERS!";
         });
     }
 }

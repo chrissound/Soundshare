@@ -83,7 +83,7 @@ class BaseController {
             $this->app->log->debug("Redirect to:". \Bitlama\Common\Helper::getUrl("/user/login", ['redirectUrl'=>$redirectUrl]));
             $this->app->redirect(\Bitlama\Common\Helper::getUrl("/user/login", ['redirectUrl'=>$redirectUrl]));
             $this->app->stop();
-            die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+            die();
         }
     }
 
@@ -129,7 +129,7 @@ class BaseController {
             $this->app->log->debug("Redirect to:". \Bitlama\Common\Helper::getUrl("/user/login", ['redirectUrl'=>$redirectUrl]));
             $this->app->redirect(\Bitlama\Common\Helper::getUrl("/user/login", ['redirectUrl'=>$redirectUrl]));
             $this->app->stop();
-            die(); // I'm not paranoid I'm just.... HOLY SHIT ARE YOU A COP?!?!  
+            die(); // I'm not paranoid I'm just.... You're not a cop are you? 
         }
     }
 }
